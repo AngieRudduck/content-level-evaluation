@@ -72,11 +72,38 @@ const composer = document.querySelector("#composer");
 const messageInput = document.querySelector("#message-input");
 const sendButton = document.querySelector(".send-button");
 const guidedSuggestions = document.querySelector("#guided-suggestions");
+const composerShell = document.querySelector(".composer-shell");
 const userMessageTemplate = document.querySelector("#user-message-template");
 const assistantMessageTemplate = document.querySelector("#assistant-message-template");
 
 let stage = "topic";
 let selectedTopic = topicCatalog.multiAgent;
+
+function updateComposerHeight() {
+  document.documentElement.style.setProperty(
+    "--composer-height",
+    `${Math.ceil(composerShell.getBoundingClientRect().height)}px`,
+  );
+}
+
+new ResizeObserver(updateComposerHeight).observe(composerShell);
+updateComposerHeight();
+
+function scrollMessageAboveComposer(message) {
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      const messageBottom = message.getBoundingClientRect().bottom;
+      const visibleBottom = composerShell.getBoundingClientRect().top - 24;
+
+      if (messageBottom > visibleBottom) {
+        window.scrollBy({
+          top: messageBottom - visibleBottom,
+          behavior: "smooth",
+        });
+      }
+    });
+  });
+}
 
 function formatTime(date = new Date()) {
   return new Intl.DateTimeFormat([], {
@@ -154,7 +181,7 @@ function askConfidence() {
     "confidence",
   );
   stage = "confidence";
-  article.scrollIntoView({ behavior: "smooth", block: "center" });
+  scrollMessageAboveComposer(article);
 }
 
 function buildLearningCard(kind, label, content) {
@@ -206,7 +233,7 @@ function showLearningMap(confidence) {
     "route",
   );
   stage = "route";
-  article.scrollIntoView({ behavior: "smooth", block: "start" });
+  scrollMessageAboveComposer(article);
 }
 
 function showRouteDetail(route) {
@@ -249,7 +276,7 @@ function showRouteDetail(route) {
     "detail",
   );
   stage = "detail";
-  article.scrollIntoView({ behavior: "smooth", block: "center" });
+  scrollMessageAboveComposer(article);
 }
 
 function restartConversation() {
@@ -265,7 +292,7 @@ function restartConversation() {
     "topic",
   );
   stage = "topic";
-  article.scrollIntoView({ behavior: "smooth", block: "center" });
+  scrollMessageAboveComposer(article);
 }
 
 function handleResponse(value, group) {
@@ -339,7 +366,7 @@ composer.addEventListener("submit", (event) => {
     appendUserMessage(value);
     const { body, article } = createAssistantMessage();
     body.append(createBubble("I’ll use that as context. Here’s a learning route you can adjust as you go."));
-    article.scrollIntoView({ behavior: "smooth", block: "center" });
+    scrollMessageAboveComposer(article);
     showLearningMap("familiar");
   }
 

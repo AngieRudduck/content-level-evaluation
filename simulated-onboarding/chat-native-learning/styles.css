@@ -45,7 +45,7 @@ button {
   width: min(100% - 48px, 840px);
   min-height: 100vh;
   margin-inline: auto;
-  padding: 72px 0 230px;
+  padding: 72px 0 calc(var(--composer-height, 230px) + 32px);
 }
 
 .assistant-heading h1 {
