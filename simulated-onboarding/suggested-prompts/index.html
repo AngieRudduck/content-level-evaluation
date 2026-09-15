@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A guided conversational onboarding simulation using suggested prompts."
+    />
+    <title>Guided playlist builder simulation</title>
+    <style>
+      :root {
+        --canvas: #f8f7f4;
+        --surface: #ffffff;
+        --surface-subtle: #f4f1eb;
+        --border: #dfddd8;
+        --border-strong: #b8b4ae;
+        --text: #292624;
+        --text-secondary: #57514c;
+        --text-muted: #716a64;
+        --brand: #6b55a3;
+        --brand-hover: #594487;
+        --brand-soft: #eeeaf8;
+        --accent: #dff3e9;
+        --success: #21845f;
+        --font: "Segoe Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        color: var(--text);
+        background: var(--canvas);
+        font-family: var(--font);
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      button,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      button:focus-visible,
+      textarea:focus-visible,
+      a:focus-visible,
+      [tabindex="-1"]:focus-visible {
+        outline: 3px solid var(--brand);
+        outline-offset: 3px;
+      }
+
+      .skip-link {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        z-index: 30;
+        padding: 8px 12px;
+        color: #fff;
+        background: var(--brand);
+        transform: translateY(-150%);
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .study-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgb(248 247 244 / 96%);
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(10px);
+      }
+
+      .study-header-inner,
+      main,
+      .navigation-inner {
+        width: min(100% - 48px, 820px);
+        margin-inline: auto;
+      }
+
+      .study-header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 58px;
+      }
+
+      .study-header p {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .study-label {
+        font-weight: 650;
+      }
+
+      .step-label {
+        color: var(--text-muted);
+      }
+
+      .progress-track {
+        height: 3px;
+        background: var(--border);
+      }
+
+      .progress-bar {
+        width: 14.285%;
+        height: 100%;
+        background: var(--brand);
+        transition: width 180ms ease;
+      }
+
+      main {
+        min-height: calc(100vh - 143px);
+        padding: 44px 0 128px;
+      }
+
+      .chat-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 32px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .chat-header p {
+        margin: 0;
+      }
+
+      .chat-avatar,
+      .assistant-avatar {
+        display: grid;
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        background: var(--brand);
+        border-radius: 50%;
+        place-items: center;
+      }
+
+      .chat-name {
+        font-weight: 650;
+      }
+
+      .chat-status {
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .step[hidden] {
+        display: none;
+      }
+
+      .step {
+        animation: reveal 180ms ease-out both;
+      }
+
+      .assistant-row {
+        display: grid;
+        grid-template-columns: 38px minmax(0, 1fr);
+        align-items: start;
+        gap: 12px;
+      }
+
+      .assistant-card {
+        max-width: 700px;
+        padding: 22px 24px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 2px 12px 12px 12px;
+        box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      .assistant-card h1,
+      .assistant-card h2 {
+        margin-bottom: 10px;
+        font-size: 1.35rem;
+        line-height: 1.3;
+      }
+
+      .assistant-card > p:last-child {
+        margin-bottom: 0;
+      }
+
+      .suggestion-label {
+        margin: 28px 0 8px 50px;
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-left: 50px;
+      }
+
+      .suggestion {
+        min-height: 38px;
+        padding: 7px 12px;
+        color: var(--text);
+        text-align: left;
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+        border-radius: 18px;
+      }
+
+      .suggestion:hover,
+      .suggestion.selected {
+        background: var(--brand-soft);
+        border-color: var(--brand);
+      }
+
+      .custom-response {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        gap: 8px;
+        margin: 10px 0 0 50px;
+        padding: 8px;
+        background: var(--surface);
+        border: 2px solid var(--border-strong);
+        border-radius: 12px;
+      }
+
+      .custom-response textarea {
+        min-height: 72px;
+        padding: 6px 8px;
+        resize: vertical;
+        color: var(--text);
+        background: transparent;
+        border: 0;
+      }
+
+      .custom-response:focus-within {
+        border-color: var(--brand);
+      }
+
+      .custom-response textarea:focus-visible {
+        outline: 0;
+      }
+
+      .send-response {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        color: #fff;
+        background: var(--brand);
+        border: 0;
+        border-radius: 6px;
+        place-items: center;
+      }
+
+      .send-response:hover {
+        background: var(--brand-hover);
+      }
+
+      .selection-summary {
+        display: grid;
+        gap: 12px;
+        margin: 24px 0 0;
+      }
+
+      .selection-summary div {
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .selection-summary dt {
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 650;
+        text-transform: uppercase;
+      }
+
+      .selection-summary dd {
+        margin: 2px 0 0;
+      }
+
+      .playlist-meta {
+        margin-bottom: 24px;
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+
+      .playlist-section + .playlist-section {
+        margin-top: 28px;
+      }
+
+      .playlist-section h3 {
+        margin-bottom: 6px;
+        font-size: 1rem;
+      }
+
+      .playlist-section p {
+        color: var(--text-secondary);
+      }
+
+      .playlist-section ol {
+        margin-bottom: 0;
+        padding-left: 24px;
+      }
+
+      .playlist-section li + li {
+        margin-top: 8px;
+      }
+
+      .confirmation {
+        margin-top: 28px;
+        padding: 16px;
+        background: var(--surface-subtle);
+        border-left: 3px solid var(--brand);
+      }
+
+      .success-mark {
+        display: grid;
+        width: 44px;
+        height: 44px;
+        margin-bottom: 18px;
+        color: #fff;
+        font-size: 22px;
+        background: var(--success);
+        border-radius: 50%;
+        place-items: center;
+      }
+
+      .view-button {
+        display: inline-flex;
+        min-height: 44px;
+        margin-top: 8px;
+        padding: 10px 16px;
+        align-items: center;
+        color: #fff;
+        font-weight: 650;
+        text-decoration: none;
+        background: var(--brand);
+        border-radius: 4px;
+      }
+
+      .navigation {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 10;
+        background: rgb(248 247 244 / 96%);
+        border-top: 1px solid var(--border);
+        backdrop-filter: blur(10px);
+      }
+
+      .navigation-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-height: 84px;
+      }
+
+      .nav-button {
+        min-width: 112px;
+        min-height: 44px;
+        padding: 10px 18px;
+        font-weight: 650;
+        border-radius: 4px;
+      }
+
+      .back-button {
+        color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+      }
+
+      .next-button {
+        margin-left: auto;
+        color: #fff;
+        background: var(--brand);
+        border: 1px solid var(--brand);
+      }
+
+      .next-button:hover:not(:disabled),
+      .view-button:hover {
+        background: var(--brand-hover);
+      }
+
+      .next-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      @keyframes reveal {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+      }
+
+      @media (max-width: 640px) {
+        .study-header-inner,
+        main,
+        .navigation-inner {
+          width: min(100% - 32px, 820px);
+        }
+
+        main {
+          padding-top: 30px;
+        }
+
+        .assistant-row {
+          grid-template-columns: 30px minmax(0, 1fr);
+          gap: 8px;
+        }
+
+        .assistant-avatar {
+          width: 30px;
+          height: 30px;
+          flex-basis: 30px;
+          font-size: 10px;
+        }
+
+        .assistant-card {
+          padding: 18px;
+        }
+
+        .suggestion-label,
+        .suggestions,
+        .custom-response {
+          margin-left: 38px;
+        }
+
+        .custom-response {
+          grid-template-columns: 1fr auto;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#simulation">Skip to simulation</a>
+
+    <header class="study-header">
+      <div class="study-header-inner">
+        <p class="study-label">Skilling playlist builder</p>
+        <p id="step-label" class="step-label">Step 1 of 7</p>
+      </div>
+      <div
+        class="progress-track"
+        role="progressbar"
+        aria-label="Simulation progress"
+        aria-valuemin="1"
+        aria-valuemax="7"
+        aria-valuenow="1"
+      >
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+    </header>
+
+    <main id="simulation">
+      <div class="chat-header" aria-label="Chat with AI Skills Navigator">
+        <div class="chat-avatar" aria-hidden="true">AI</div>
+        <div>
+          <p class="chat-name">AI Skills Navigator</p>
+          <p class="chat-status">Chat &middot; Guided playlist builder</p>
+        </div>
+      </div>
+
+      <section class="step" data-step="0" data-question="audience" aria-labelledby="audience-title">
+        <div class="assistant-row">
+          <div class="assistant-avatar" aria-hidden="true">AI</div>
+          <div class="assistant-card">
+            <h1 id="audience-title" tabindex="-1">Who are you creating this playlist for?</h1>
+            <p>Start with the audience. We can refine the details one step at a time.</p>
+          </div>
+        </div>
+        <p class="suggestion-label">Suggested prompts</p>
+        <div class="suggestions">
+          <button class="suggestion" type="button" data-value="Myself">Myself</button>
+          <button class="suggestion" type="button" data-value="My team">My team</button>
+          <button class="suggestion" type="button" data-value="Customers or partners">Customers or partners</button>
+        </div>
+        <div class="custom-response">
+          <textarea aria-label="Describe your audience" placeholder="Type your own response..."></textarea>
+          <button class="send-response" type="button" aria-label="Send response">&#8594;</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="1" data-question="role" aria-labelledby="role-title" hidden>
+        <div class="assistant-row">
+          <div class="assistant-avatar" aria-hidden="true">AI</div>
+          <div class="assistant-card">
+            <h1 id="role-title" tabindex="-1">Which role best describes them?</h1>
+            <p>This helps me choose relevant scenarios and the right level of technical depth.</p>
+          </div>
+        </div>
+        <p class="suggestion-label">Suggested prompts</p>
+        <div class="suggestions">
+          <button class="suggestion" type="button" data-value="Customer success architects">Customer success architects</button>
+          <button class="suggestion" type="button" data-value="AI developers">AI developers</button>
+          <button class="suggestion" type="button" data-value="Solution architects">Solution architects</button>
+          <button class="suggestion" type="button" data-value="Technical leaders">Technical leaders</button>
+        </div>
+        <div class="custom-response">
+          <textarea aria-label="Describe the role" placeholder="Type your own response..."></textarea>
+          <button class="send-response" type="button" aria-label="Send response">&#8594;</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="2" data-question="outcome" aria-labelledby="outcome-title" hidden>
+        <div class="assistant-row">
+          <div class="assistant-avatar" aria-hidden="true">AI</div>
+          <div class="assistant-card">
+            <h1 id="outcome-title" tabindex="-1">What should they be able to do afterward?</h1>
+            <p>Choose the outcome closest to the job they need to perform.</p>
+          </div>
+        </div>
+        <p class="suggestion-label">Suggested prompts</p>
+        <div class="suggestions">
+          <button class="suggestion" type="button" data-value="Design agent and multi-agent solutions">Design agent and multi-agent solutions</button>
+          <button class="suggestion" type="button" data-value="Evaluate and improve an existing solution">Evaluate and improve an existing solution</button>
+          <button class="suggestion" type="button" data-value="Guide customers through architecture decisions">Guide customers through architecture decisions</button>
+          <button class="suggestion" type="button" data-value="Prepare a production deployment">Prepare a production deployment</button>
+        </div>
+        <div class="custom-response">
+          <textarea aria-label="Describe the learning outcome" placeholder="Type your own response..."></textarea>
+          <button class="send-response" type="button" aria-label="Send response">&#8594;</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="3" data-question="focus" aria-labelledby="focus-title" hidden>
+        <div class="assistant-row">
+          <div class="assistant-avatar" aria-hidden="true">AI</div>
+          <div class="assistant-card">
+            <h1 id="focus-title" tabindex="-1">Where should the playlist focus?</h1>
+            <p>Pick the priority that should shape the recommendation.</p>
+          </div>
+        </div>
+        <p class="suggestion-label">Suggested prompts</p>
+        <div class="suggestions">
+          <button class="suggestion" type="button" data-value="Agent routing and orchestration">Agent routing and orchestration</button>
+          <button class="suggestion" type="button" data-value="Agent design and communication">Agent design and communication</button>
+          <button class="suggestion" type="button" data-value="Observability and evaluation">Observability and evaluation</button>
+          <button class="suggestion" type="button" data-value="Security and governance">Security and governance</button>
+        </div>
+        <div class="custom-response">
+          <textarea aria-label="Describe the focus" placeholder="Type your own response..."></textarea>
+          <button class="send-response" type="button" aria-label="Send response">&#8594;</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="4" data-question="format" aria-labelledby="format-title" hidden>
+        <div class="assistant-row">
+          <div class="assistant-avatar" aria-hidden="true">AI</div>
+          <div class="assistant-card">
+            <h1 id="format-title" tabindex="-1">What learning format works best?</h1>
+            <p>I’ll use this to balance explanation, demonstrations, and practice.</p>
+          </div>
+        </div>
+        <p class="suggestion-label">Suggested prompts</p>
+        <div class="suggestions">
+          <button class="suggestion" type="button" data-value="Hands-on modules and labs">Hands-on modules and labs</button>
+          <button class="suggestion" type="button" data-value="A mix of concepts and practice">A mix of concepts and practice</button>
+          <button class="suggestion" type="button" data-value="Short videos and examples">Short videos and examples</button>
+          <button class="suggestion" type="button" data-value="No preference">No preference</button>
+        </div>
+        <div class="custom-response">
+          <textarea aria-label="Describe the learning format" placeholder="Type your own response..."></textarea>
+          <button class="send-response" type="button" aria-label="Send response">&#8594;</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="5" aria-labelledby="review-title" hidden>
+        <div class="assistant-row">
+          <div class="assistant-avatar" aria-hidden="true">AI</div>
+          <div class="assistant-card">
+            <h1 id="review-title" tabindex="-1">Here’s what I’ll use</h1>
+            <p>Review your choices before I build the playlist.</p>
+            <dl id="selection-summary" class="selection-summary"></dl>
+          </div>
+        </div>
+      </section>
+
+      <section class="step" data-step="6" aria-labelledby="playlist-title" hidden>
+        <div class="assistant-row">
+          <div class="assistant-avatar" aria-hidden="true">AI</div>
+          <article class="assistant-card">
+            <h1 id="playlist-title" tabindex="-1">Your skilling playlist is ready</h1>
+            <p id="playlist-intro"></p>
+            <p class="playlist-meta">2 sections &middot; 4 modules &middot; 2h 34m</p>
+
+            <section class="playlist-section">
+              <h3>1. Agent design foundations <span>&middot; 48m</span></h3>
+              <p>Define clear agent roles and collaboration patterns so multi-agent solutions are testable and composable.</p>
+              <ol>
+                <li>Design enterprise-scale agent communication with A2A in Azure</li>
+              </ol>
+            </section>
+
+            <section class="playlist-section">
+              <h3>2. Routing, observability, and governance <span>&middot; 1h 46m</span></h3>
+              <p>Evaluate routing decisions and apply observability and governance controls to production agent systems.</p>
+              <ol>
+                <li>Optimize multi-agent performance and cost in Microsoft Foundry</li>
+                <li>Implement distributed observability with OpenTelemetry</li>
+                <li>Unlock governance for your AI workforce</li>
+              </ol>
+            </section>
+
+            <div id="save-confirmation" class="confirmation">
+              <strong>Ready to keep it?</strong>
+              <p>Save this playlist now, or go back to adjust any answer.</p>
+            </div>
+            <div id="saved-state" hidden>
+              <span class="success-mark" aria-hidden="true">&#10003;</span>
+              <h2>Saved to your learning profile</h2>
+              <a class="view-button" href="#playlist-title">View skilling playlist</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <nav class="navigation" aria-label="Simulation steps">
+      <div class="navigation-inner">
+        <button id="back-button" class="nav-button back-button" type="button" hidden>
+          <span aria-hidden="true">&#8592;</span> Back
+        </button>
+        <button id="next-button" class="nav-button next-button" type="button" disabled hidden>
+          Continue <span aria-hidden="true">&#8594;</span>
+        </button>
+      </div>
+    </nav>
+
+    <script>
+      const steps = [...document.querySelectorAll("[data-step]")];
+      const answers = {};
+      const labels = {
+        audience: "Audience",
+        role: "Role",
+        outcome: "Learning outcome",
+        focus: "Priority",
+        format: "Format",
+      };
+      const backButton = document.querySelector("#back-button");
+      const nextButton = document.querySelector("#next-button");
+      const stepLabel = document.querySelector("#step-label");
+      const progressTrack = document.querySelector(".progress-track");
+      const progressBar = document.querySelector("#progress-bar");
+      const selectionSummary = document.querySelector("#selection-summary");
+      const playlistIntro = document.querySelector("#playlist-intro");
+      const saveConfirmation = document.querySelector("#save-confirmation");
+      const savedState = document.querySelector("#saved-state");
+      let currentStep = 0;
+      let isSaved = false;
+
+      function selectAnswer(step, value, selectedButton) {
+        const question = step.dataset.question;
+        answers[question] = value;
+        step.querySelectorAll(".suggestion").forEach((button) => {
+          button.classList.toggle("selected", button === selectedButton);
+          button.setAttribute("aria-pressed", button === selectedButton ? "true" : "false");
+        });
+        nextButton.disabled = false;
+      }
+
+      function buildSummary() {
+        selectionSummary.replaceChildren();
+        Object.entries(labels).forEach(([key, label]) => {
+          const wrapper = document.createElement("div");
+          const term = document.createElement("dt");
+          const description = document.createElement("dd");
+          term.textContent = label;
+          description.textContent = answers[key];
+          wrapper.append(term, description);
+          selectionSummary.append(wrapper);
+        });
+      }
+
+      function showStep(stepIndex) {
+        currentStep = Math.max(0, Math.min(stepIndex, steps.length - 1));
+        steps.forEach((step, index) => {
+          step.hidden = index !== currentStep;
+        });
+
+        if (currentStep === 5) {
+          buildSummary();
+        }
+
+        if (currentStep === 6) {
+          playlistIntro.textContent = `Built for ${answers.role.toLowerCase()} who want to ${answers.outcome.toLowerCase()}, with an emphasis on ${answers.focus.toLowerCase()} and ${answers.format.toLowerCase()}.`;
+        }
+
+        const stepNumber = currentStep + 1;
+        stepLabel.textContent = `Step ${stepNumber} of ${steps.length}`;
+        progressTrack.setAttribute("aria-valuenow", stepNumber);
+        progressBar.style.width = `${(stepNumber / steps.length) * 100}%`;
+        backButton.hidden = currentStep === 0 || isSaved;
+        nextButton.disabled = Boolean(steps[currentStep].dataset.question && !answers[steps[currentStep].dataset.question]);
+        nextButton.innerHTML = currentStep === 5
+          ? 'Build playlist <span aria-hidden="true">&#8594;</span>'
+          : currentStep === 6
+            ? "Save playlist"
+            : 'Continue <span aria-hidden="true">&#8594;</span>';
+        nextButton.hidden = currentStep < 5 || isSaved;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        steps[currentStep].querySelector("h1").focus({ preventScroll: true });
+      }
+
+      document.querySelectorAll(".suggestion").forEach((button) => {
+        button.setAttribute("aria-pressed", "false");
+        button.addEventListener("click", () => {
+          const step = button.closest(".step");
+          const textarea = step.querySelector("textarea");
+          step.querySelectorAll(".suggestion").forEach((suggestion) => {
+            const isSelected = suggestion === button;
+            suggestion.classList.toggle("selected", isSelected);
+            suggestion.setAttribute("aria-pressed", isSelected ? "true" : "false");
+          });
+          textarea.value = button.dataset.value;
+          textarea.focus();
+        });
+      });
+
+      document.querySelectorAll(".send-response").forEach((button) => {
+        button.addEventListener("click", () => {
+          const step = button.closest(".step");
+          const textarea = step.querySelector("textarea");
+          const value = textarea.value.trim();
+          if (value) {
+            selectAnswer(step, value, null);
+            showStep(currentStep + 1);
+          } else {
+            textarea.focus();
+          }
+        });
+      });
+
+      document.querySelectorAll(".custom-response textarea").forEach((textarea) => {
+        textarea.addEventListener("input", () => {
+          const step = textarea.closest(".step");
+          step.querySelectorAll(".suggestion").forEach((suggestion) => {
+            const isMatch = suggestion.dataset.value === textarea.value;
+            suggestion.classList.toggle("selected", isMatch);
+            suggestion.setAttribute("aria-pressed", isMatch ? "true" : "false");
+          });
+        });
+
+        textarea.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+            event.preventDefault();
+            textarea.closest(".custom-response").querySelector(".send-response").click();
+          }
+        });
+      });
+
+      backButton.addEventListener("click", () => showStep(currentStep - 1));
+      nextButton.addEventListener("click", () => {
+        if (currentStep < steps.length - 1) {
+          showStep(currentStep + 1);
+          return;
+        }
+
+        isSaved = true;
+        saveConfirmation.hidden = true;
+        savedState.hidden = false;
+        backButton.hidden = true;
+        nextButton.hidden = true;
+        document.querySelector("#playlist-title").focus({ preventScroll: true });
+      });
+    </script>
+  </body>
+</html>

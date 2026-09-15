@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A step-by-step evaluation of the AI Skills Navigator onboarding experience."
+    />
+    <title>Skilling playlist builder evaluation</title>
+    <style>
+      :root {
+        --canvas: #fffdfb;
+        --surface: #ffffff;
+        --surface-subtle: #faf6f0;
+        --border: #e8e6e3;
+        --border-strong: #d1d1d1;
+        --text: #272320;
+        --text-secondary: #4c4642;
+        --text-muted: #635c57;
+        --brand: #6b55a3;
+        --brand-hover: #5e4b8f;
+        --brand-soft: #d8d3ef;
+        --success: #2eaa7b;
+        --font: "Segoe Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        color: var(--text);
+        background: var(--canvas);
+        font-family: var(--font);
+        scroll-behavior: smooth;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.55;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      a {
+        color: var(--brand-hover);
+        text-underline-offset: 2px;
+      }
+
+      .skip-link {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        z-index: 20;
+        padding: 8px 12px;
+        color: #fff;
+        background: var(--brand);
+        border-radius: 4px;
+        transform: translateY(-150%);
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .study-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgb(255 253 251 / 96%);
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(8px);
+      }
+
+      .study-header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        width: min(100% - 48px, 840px);
+        min-height: 58px;
+        margin-inline: auto;
+      }
+
+      .study-label,
+      .step-label {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .study-label {
+        font-weight: 600;
+      }
+
+      .step-label {
+        color: var(--text-muted);
+      }
+
+      .progress-track {
+        height: 3px;
+        background: var(--border);
+      }
+
+      .progress-bar {
+        width: 25%;
+        height: 100%;
+        background: var(--brand);
+        transition: width 180ms ease;
+      }
+
+      main {
+        width: min(100% - 48px, 840px);
+        min-height: calc(100vh - 143px);
+        margin-inline: auto;
+        padding: 56px 0 124px;
+      }
+
+      .chat-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 38px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .chat-header p {
+        margin: 0;
+      }
+
+      .chat-avatar,
+      .assistant-heading::before {
+        display: grid;
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        background: var(--brand);
+        border-radius: 50%;
+        content: "AI";
+        place-items: center;
+      }
+
+      .chat-name {
+        font-weight: 600;
+      }
+
+      .chat-status {
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .step[hidden] {
+        display: none;
+      }
+
+      .step {
+        animation: reveal 180ms ease-out both;
+      }
+
+      .step > h1,
+      .step > header h1 {
+        margin: 0 0 8px;
+        font-size: clamp(1.75rem, 4vw, 2rem);
+        line-height: 1.2;
+      }
+
+      .step h2 {
+        margin: 18px 0 10px;
+        font-size: 1.25rem;
+      }
+
+      .step p {
+        margin: 0 0 14px;
+      }
+
+      .step-intro {
+        max-width: 720px;
+      }
+
+      hr {
+        height: 1px;
+        margin: 18px 0;
+        background: var(--border);
+        border: 0;
+      }
+
+      .question-group {
+        margin-top: 16px;
+      }
+
+      .question-group h3 {
+        margin: 0;
+        font-size: 1rem;
+      }
+
+      .question-group ul {
+        margin: 4px 0 0;
+        padding-left: 24px;
+      }
+
+      .check {
+        display: inline-grid;
+        width: 16px;
+        height: 16px;
+        margin-right: 6px;
+        color: #fff;
+        font-size: 11px;
+        line-height: 1;
+        background: var(--success);
+        border-radius: 50%;
+        place-items: center;
+        vertical-align: 1px;
+      }
+
+      .message-row {
+        display: flex;
+        align-items: end;
+        justify-content: flex-end;
+        gap: 8px;
+        margin: 28px 0 38px;
+      }
+
+      .message-content {
+        max-width: 690px;
+      }
+
+      .message-time,
+      .response-time {
+        display: block;
+        margin-bottom: 10px;
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .message-time {
+        text-align: right;
+      }
+
+      .user-message {
+        padding: 14px 16px;
+        background: var(--brand-soft);
+        border-radius: 12px 12px 0 12px;
+      }
+
+      .avatar {
+        display: grid;
+        flex: 0 0 34px;
+        width: 34px;
+        height: 34px;
+        color: var(--brand);
+        font-weight: 700;
+        background: #e8e3ff;
+        border-radius: 50%;
+        place-items: center;
+      }
+
+      .assistant-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .assistant-heading h1,
+      .assistant-heading h2 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      .assistant-message {
+        padding: 20px 22px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 0 12px 12px 12px;
+        box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+      }
+
+      .composer-preview {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 42px;
+        padding: 12px 14px;
+        color: var(--text-muted);
+        background: var(--surface);
+        border: 2px solid var(--border);
+        border-radius: 12px;
+      }
+
+      .composer-preview span:first-child {
+        flex: 1;
+      }
+
+      .send-icon {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        color: #fff;
+        background: var(--brand);
+        border-radius: 4px;
+        place-items: center;
+      }
+
+      .path-meta {
+        margin: -18px 0 28px !important;
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+
+      .summary {
+        margin: 30px 0;
+        padding: 24px;
+        background: var(--surface-subtle);
+        border-left: 3px solid var(--brand);
+      }
+
+      .summary p:last-child {
+        margin-bottom: 0;
+      }
+
+      .playlist-title {
+        margin: 0 0 28px;
+        font-size: 1.3rem;
+        line-height: 1.35;
+      }
+
+      .playlist-section {
+        margin-bottom: 30px;
+      }
+
+      .playlist-section h3 {
+        margin: 0 0 14px;
+        font-size: 1rem;
+        line-height: 1.45;
+      }
+
+      .playlist-section h3 span::before,
+      .playlist-section li span::before {
+        content: " · ";
+      }
+
+      .playlist-section ol {
+        margin: 0;
+        padding-left: 32px;
+      }
+
+      .playlist-section li + li {
+        margin-top: 8px;
+      }
+
+      .confirmation-question {
+        margin-top: 36px !important;
+      }
+
+      .choice {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 8px 14px;
+        color: var(--text);
+        font-weight: 600;
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+        border-radius: 4px;
+      }
+
+      .saved-message {
+        padding-top: 12vh;
+      }
+
+      .saved-message h1 {
+        margin-top: 18px;
+      }
+
+      .view-playlist-button {
+        display: inline-flex;
+        align-items: center;
+        min-height: 48px;
+        margin-top: 8px;
+        padding: 10px 18px;
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        background: var(--brand);
+        border-radius: 4px;
+      }
+
+      .evaluation-note {
+        margin-top: 28px !important;
+        color: var(--text-secondary);
+      }
+
+      .navigation {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 10;
+        background: rgb(255 253 251 / 96%);
+        border-top: 1px solid var(--border);
+        backdrop-filter: blur(8px);
+      }
+
+      .navigation-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        width: min(100% - 48px, 840px);
+        min-height: 84px;
+        margin-inline: auto;
+      }
+
+      .nav-button {
+        min-width: 112px;
+        min-height: 44px;
+        padding: 10px 18px;
+        font-weight: 600;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .back-button {
+        color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+      }
+
+      .next-button {
+        margin-left: auto;
+        color: #fff;
+        background: var(--brand);
+        border: 1px solid var(--brand);
+      }
+
+      .back-button:hover {
+        background: var(--surface-subtle);
+        border-color: var(--brand);
+      }
+
+      .next-button:hover,
+      .view-playlist-button:hover {
+        color: #fff;
+        background: var(--brand-hover);
+      }
+
+      .nav-button[hidden] {
+        display: none;
+      }
+
+      button:focus-visible,
+      a:focus-visible,
+      [tabindex="-1"]:focus-visible {
+        outline: 2px solid var(--brand);
+        outline-offset: 3px;
+      }
+
+      @keyframes reveal {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+      }
+
+      @media (max-width: 680px) {
+        .study-header-inner,
+        main,
+        .navigation-inner {
+          width: min(100% - 32px, 840px);
+        }
+
+        main {
+          padding-top: 38px;
+        }
+
+        .study-label {
+          max-width: 210px;
+        }
+
+        .nav-button {
+          min-width: 100px;
+        }
+
+        .summary {
+          padding: 18px;
+        }
+
+        .assistant-message {
+          padding: 18px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#simulation">Skip to simulation</a>
+
+    <header class="study-header">
+      <div class="study-header-inner">
+        <p class="study-label">Skilling playlist builder</p>
+        <p id="step-label" class="step-label">Step 1 of 4</p>
+      </div>
+      <div
+        class="progress-track"
+        role="progressbar"
+        aria-label="Simulation progress"
+        aria-valuemin="1"
+        aria-valuemax="4"
+        aria-valuenow="1"
+      >
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+    </header>
+
+    <main id="simulation">
+      <div class="chat-header" aria-label="Chat with AI Skills Navigator">
+        <div class="chat-avatar" aria-hidden="true">AI</div>
+        <div>
+          <p class="chat-name">AI Skills Navigator</p>
+          <p class="chat-status">Chat &middot; Skilling playlist builder</p>
+        </div>
+      </div>
+
+      <section class="step step-intro" data-step="0" aria-labelledby="intro-title">
+        <div class="assistant-heading">
+          <h1 id="intro-title" tabindex="-1">Skilling playlist builder</h1>
+          <span class="response-time">Just now</span>
+        </div>
+        <div class="assistant-message">
+          <p>I'm here to help you design a tailored skilling playlist for yourself or your team.</p>
+
+          <hr />
+
+          <h2>Let's get started</h2>
+          <p>To shape a playlist that works for you, tell me a few essentials:</p>
+
+          <div class="question-group">
+            <h3><span class="check" aria-hidden="true">&#10003;</span> Who is this for?</h3>
+            <ul>
+              <li>Is the playlist for you or for a team?</li>
+              <li>If it's for a team, what roles and experience levels are represented?</li>
+            </ul>
+          </div>
+
+          <div class="question-group">
+            <h3><span class="check" aria-hidden="true">&#10003;</span> Learning outcomes</h3>
+            <ul>
+              <li>What should learners be able to do afterward?</li>
+              <li>Are there specific growth areas, priorities, or topics to focus on?</li>
+            </ul>
+          </div>
+
+          <hr />
+
+          <p>
+            Once I have these details, I'll create a playlist that fits your goals.
+            <strong>Add any context that matters - the more you share, the better the playlist.</strong>
+          </p>
+        </div>
+      </section>
+
+      <section class="step" data-step="1" aria-labelledby="prompt-title" hidden>
+        <h1 id="prompt-title" tabindex="-1">Your request</h1>
+        <p>You replied in the chat:</p>
+
+        <article class="message-row">
+          <div class="message-content">
+            <span class="message-time">Just now</span>
+            <div class="user-message">
+              Create this for customer success architects who help customers build AI agents and
+              multi-agent solutions. Focus on evaluating and improving agent routing and
+              orchestration decisions, including agent cards, routing evaluation, orchestration
+              patterns, observability, and governance.
+            </div>
+          </div>
+          <div class="avatar" aria-hidden="true">U</div>
+        </article>
+
+        <div class="composer-preview" aria-label="Chat message sent">
+          <span>Message sent</span>
+          <span class="send-icon" aria-hidden="true">&#8594;</span>
+        </div>
+      </section>
+
+      <section class="step" data-step="2" aria-labelledby="playlist-response-title" hidden>
+        <article>
+          <div class="assistant-heading">
+            <h1 id="playlist-response-title" tabindex="-1">Here's your skilling playlist</h1>
+            <span class="response-time">Just now</span>
+          </div>
+
+          <div class="assistant-message">
+
+          <p>
+            Got it. You're enabling customer success architects to help customers build AI agent
+            and multi-agent solutions with stronger routing and orchestration decisions.
+          </p>
+
+          <div class="summary">
+            <p>
+              <strong>Assumptions:</strong> Customer success architects are the target learners;
+              mixed formats are fine; the focus is Azure AI agents and practical, hands-on adoption.
+            </p>
+            <p>
+              <strong>Objective:</strong> Build the capability to design, evaluate, and govern Azure
+              AI multi-agent systems with effective routing and orchestration.
+            </p>
+            <p>
+              <strong>Goal:</strong> Confidently guide customers toward reliable, observable, and
+              compliant multi-agent solutions.
+            </p>
+            <p>This recommendation won't be saved until you confirm it.</p>
+          </div>
+
+          <h2 class="playlist-title">
+            CSA playbook: Evaluating and improving agent routing and orchestration
+          </h2>
+          <p class="path-meta">2 sections &middot; 4 modules &middot; 2h 34m</p>
+
+          <section class="playlist-section">
+            <h3>1. Agent design foundations <span>48m</span></h3>
+            <p><strong>Outcome</strong> - Define clear agent roles and collaboration patterns so multi-agent solutions are testable and composable.</p>
+            <ol>
+              <li><a href="#" tabindex="-1">Design enterprise-scale agent communication with A2A in Azure</a> <span>48m</span></li>
+            </ol>
+          </section>
+
+          <section class="playlist-section">
+            <h3>2. Routing, observability, and governance <span>1h 46m</span></h3>
+            <p><strong>Outcome</strong> - Evaluate routing decisions and apply observability and governance controls to production agent systems.</p>
+            <ol>
+              <li><a href="#" tabindex="-1">Optimize multi-agent performance and cost in Microsoft Foundry</a> <span>40m</span></li>
+              <li><a href="#" tabindex="-1">Implement distributed observability with OpenTelemetry</a> <span>41m</span></li>
+              <li><a href="#" tabindex="-1">Unlock governance for your AI workforce</a> <span>25m</span></li>
+            </ol>
+          </section>
+
+          <p class="confirmation-question">
+            Would you like me to save this <em>skilling playlist</em> for your team? I can save it
+            as-is or tune the format and pacing first.
+          </p>
+          <span class="choice">Yes, save it</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="step saved-message" data-step="3" aria-labelledby="saved-title" hidden>
+        <div class="assistant-heading">
+          <h2>Skilling playlist builder</h2>
+          <span class="response-time">Just now</span>
+        </div>
+        <h1 id="saved-title" tabindex="-1">Done! Your skilling playlist is ready</h1>
+        <a class="view-playlist-button" href="#" tabindex="-1">View skilling playlist</a>
+        <p class="evaluation-note">You have reached the end of this simulation.</p>
+      </section>
+    </main>
+
+    <nav class="navigation" aria-label="Simulation steps">
+      <div class="navigation-inner">
+        <button id="back-button" class="nav-button back-button" type="button" hidden>
+          <span aria-hidden="true">&#8592;</span> Back
+        </button>
+        <button id="next-button" class="nav-button next-button" type="button">
+          Next <span aria-hidden="true">&#8594;</span>
+        </button>
+      </div>
+    </nav>
+
+    <script>
+      const steps = [...document.querySelectorAll("[data-step]")];
+      const backButton = document.querySelector("#back-button");
+      const nextButton = document.querySelector("#next-button");
+      const stepLabel = document.querySelector("#step-label");
+      const progressTrack = document.querySelector(".progress-track");
+      const progressBar = document.querySelector("#progress-bar");
+      let currentStep = 0;
+
+      function showStep(stepIndex) {
+        currentStep = Math.max(0, Math.min(stepIndex, steps.length - 1));
+
+        steps.forEach((step, index) => {
+          step.hidden = index !== currentStep;
+        });
+
+        const stepNumber = currentStep + 1;
+        stepLabel.textContent = `Step ${stepNumber} of ${steps.length}`;
+        progressTrack.setAttribute("aria-valuenow", stepNumber);
+        progressBar.style.width = `${(stepNumber / steps.length) * 100}%`;
+        backButton.hidden = currentStep === 0;
+        nextButton.hidden = currentStep === steps.length - 1;
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        steps[currentStep].querySelector("h1").focus({ preventScroll: true });
+      }
+
+      backButton.addEventListener("click", () => showStep(currentStep - 1));
+      nextButton.addEventListener("click", () => showStep(currentStep + 1));
+    </script>
+  </body>
+</html>

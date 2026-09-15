@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A chat-native simulation for discovering a topic, prerequisite knowledge, and next learning steps."
+    />
+    <title>Guided learning conversation</title>
+    <link rel="stylesheet" href="../shared-theme.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#conversation">Skip to conversation</a>
+
+    <main id="conversation" class="conversation" aria-live="polite">
+      <div id="thread" class="thread">
+        <article class="message assistant-message">
+          <div class="assistant-heading">
+            <h1 id="page-title">Let's get started</h1>
+            <time>Just now</time>
+          </div>
+          <div class="message-body">
+            <div class="bubble">
+              <p>Tell me what you’re working toward. You can choose a prompt or ask in your own words.</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <div class="composer-shell">
+      <div id="guided-suggestions" class="guided-suggestions" aria-label="Suggested prompts">
+        <p class="prompt-label">Suggested prompts</p>
+        <div class="prompt-list" data-prompt-group="topic">
+          <button type="button" data-value="I want to build a multi-agent solution">
+            I want to build a multi-agent solution
+          </button>
+          <button type="button" data-value="Help me evaluate an AI agent">
+            Help me evaluate an AI agent
+          </button>
+          <button type="button" data-value="How do I secure AI applications?">
+            How do I secure AI applications?
+          </button>
+        </div>
+      </div>
+      <form id="composer" class="composer">
+        <label class="sr-only" for="message-input">Ask about a learning topic</label>
+        <textarea
+          id="message-input"
+          rows="1"
+          placeholder="Ask what you want to learn..."
+        ></textarea>
+        <button class="send-button" type="submit" aria-label="Send message" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m4 12 16-8-5.5 16-3.1-6.6L4 12Zm7.4 1.4L20 4" />
+          </svg>
+        </button>
+      </form>
+      <p>AI-generated guidance can make mistakes. Check important details.</p>
+    </div>
+
+    <template id="user-message-template">
+      <article class="message message-row user-row">
+        <div>
+          <time class="message-time"></time>
+          <div class="user-message"></div>
+        </div>
+        <div class="avatar" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="3.5" />
+            <path d="M5.5 19c.5-3.7 2.7-5.5 6.5-5.5s6 1.8 6.5 5.5" />
+          </svg>
+        </div>
+      </article>
+    </template>
+
+    <template id="assistant-message-template">
+      <article class="message assistant-message">
+        <div class="assistant-heading">
+          <time></time>
+        </div>
+        <div class="message-body"></div>
+      </article>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
