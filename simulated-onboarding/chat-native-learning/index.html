@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="A chat-native simulation for discovering a topic, prerequisite knowledge, and next learning steps."
+      content="A guided conversation for choosing foundational, task-based, or credential learning."
     />
     <title>Guided learning conversation</title>
     <link rel="stylesheet" href="../shared-theme.css" />
@@ -23,7 +23,7 @@
           </div>
           <div class="message-body">
             <div class="bubble">
-              <p>Tell me what you’re working toward. You can choose a prompt or ask in your own words.</p>
+              <p>What kind of learning are you looking for?</p>
             </div>
           </div>
         </article>
@@ -33,24 +33,24 @@
     <div class="composer-shell">
       <div id="guided-suggestions" class="guided-suggestions" aria-label="Suggested prompts">
         <p class="prompt-label">Suggested prompts</p>
-        <div class="prompt-list" data-prompt-group="topic">
-          <button type="button" data-value="I want to build a multi-agent solution">
-            I want to build a multi-agent solution
+        <div class="prompt-list" data-prompt-group="intent">
+          <button type="button" data-value="foundation">
+            Build foundational knowledge
           </button>
-          <button type="button" data-value="Help me evaluate an AI agent">
-            Help me evaluate an AI agent
+          <button type="button" data-value="task">
+            Learn a task-based skill
           </button>
-          <button type="button" data-value="How do I secure AI applications?">
-            How do I secure AI applications?
+          <button type="button" data-value="credential">
+            Work toward a credential
           </button>
         </div>
       </div>
       <form id="composer" class="composer">
-        <label class="sr-only" for="message-input">Ask about a learning topic</label>
+        <label class="sr-only" for="message-input">Describe what you want to learn</label>
         <textarea
           id="message-input"
           rows="1"
-          placeholder="Ask what you want to learn..."
+          placeholder="Describe what you want to learn..."
         ></textarea>
         <button class="send-button" type="submit" aria-label="Send message" disabled>
           <svg viewBox="0 0 24 24" aria-hidden="true">
