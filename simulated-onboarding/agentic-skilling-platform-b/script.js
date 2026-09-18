@@ -15,6 +15,9 @@ const progressMessage = document.querySelector("#progress-message");
 const userTemplate = document.querySelector("#user-message-template");
 const assistantTemplate = document.querySelector("#assistant-message-template");
 const initialMessages = messages.innerHTML;
+const isDemoMode = new URLSearchParams(window.location.search).get("demo") === "1";
+
+document.body.classList.toggle("demo-mode", isDemoMode);
 
 const learner = {
   currentLevel: "",
@@ -99,9 +102,9 @@ const contentTypes = {
 };
 
 const decisionGuidance = {
-  "Text-based learning": "Read at your own pace.",
-  "Video-based learning": "Visual walkthrough.",
-  "Hands-on practice": "Guided practice.",
+  "Text-based learning": "Read at your own pace",
+  "Video-based learning": "Visual walkthrough",
+  "Hands-on practice": "Guided practice",
 };
 
 const flows = {
@@ -670,6 +673,7 @@ function resetExperience() {
     learner[key] = Array.isArray(learner[key]) ? [] : "";
   });
   step = "welcome";
+  document.body.classList.remove("demo-results-visible");
   messages.innerHTML = initialMessages;
   setSuggestions([]);
   showNowButton.hidden = true;
@@ -718,6 +722,163 @@ function showStarterOption() {
   showNowButton.textContent = "Get started now";
   showNowButton.hidden = false;
   showNowNote.hidden = false;
+}
+
+function parseFoundationPrompt(text) {
+  const normalizedText = text
+    .toLowerCase()
+    .replaceAll("–", "-")
+    .replace(/\s+/g, " ")
+    .trim();
+  const topic = normalizedText.includes("copilot prompt")
+    ? "Effective Copilot prompts"
+    : normalizedText.includes("ai agent")
+      ? "AI agents"
+      : learner.topic || "Generative AI";
+  const goal = normalizedText.includes("common use") ||
+      normalizedText.includes("scenario")
+    ? "Explore common uses and scenarios"
+    : normalizedText.includes("benefit") ||
+        normalizedText.includes("limitation")
+      ? "Understand benefits and limitations"
+      : "Understand the key concepts";
+  const time = normalizedText.includes("30-60")
+    ? "30–60 minutes"
+    : normalizedText.includes("more than 1 hour") ||
+        normalizedText.includes("over an hour")
+      ? "More than 1 hour"
+      : "15–30 minutes";
+  const styles = normalizedText.includes("video")
+    ? "Video-based learning"
+    : normalizedText.includes("hands-on") || normalizedText.includes("lab")
+      ? "Hands-on practice"
+      : normalizedText.includes("balanced mix")
+        ? "A balanced mix"
+        : "Text-based learning";
+
+  return { topic, goal, time, styles };
+}
+
+function submitFoundationPrompt(text) {
+  const selections = parseFoundationPrompt(text);
+  learner.topic = selections.topic;
+  learner.goal = selections.goal;
+  learner.time = selections.time;
+  learner.styles = selections.styles;
+  appendUserMessage(text);
+  input.value = "";
+  setSuggestions([]);
+  showNowButton.hidden = true;
+  showNowNote.hidden = true;
+  progressMessage.textContent = "Matching your prompt to a foundational playlist…";
+  window.setTimeout(showFoundationResults, 250);
+}
+
+function createFoundationPromptExample(topic) {
+  const topicPhrase =
+    {
+      "Effective Copilot prompts": "effective Copilot prompts",
+      "AI agents": "AI agents",
+      "Generative AI": "generative AI",
+    }[topic] || topic.toLowerCase();
+
+  return `I want to understand the key concepts of ${topicPhrase}. I have 15–30 minutes and prefer a balanced mix.`;
+}
+
+function showFoundationPrompt() {
+  step = "foundationPrompt";
+  updateProgress(refinementSteps.foundationGoal);
+  appendAssistantMessage(`
+    <p><strong>Want to shape this playlist further?</strong></p>
+    <p>This example adds what you want to accomplish, how much time you have, and how you like to learn. Edit it or get started now.</p>
+  `);
+  setSuggestions([]);
+  showNowButton.textContent = "Get started now";
+  showNowButton.hidden = false;
+  showNowNote.hidden = true;
+  input.value = createFoundationPromptExample(learner.topic);
+  input.placeholder = "Describe your topic, goal, time, and learning style...";
+  input.focus();
+}
+
+function parseTaskPrompt(text) {
+  const normalizedText = text
+    .toLowerCase()
+    .replaceAll("–", "-")
+    .replace(/\s+/g, " ")
+    .trim();
+  const knownGoals = flows.taskGoal.options.map(([value]) => value);
+  const goal =
+    knownGoals.find((option) => normalizedText.includes(option.toLowerCase())) ||
+    (normalizedText.includes("ai agent")
+      ? "Build and deploy an AI agent"
+      : learner.goal || "Build and deploy an AI agent");
+  const time = normalizedText.includes("15-30")
+    ? "15–30 minutes"
+    : normalizedText.includes("more than 1 hour") ||
+        normalizedText.includes("over an hour")
+      ? "More than 1 hour"
+      : "30–60 minutes";
+  const styles = normalizedText.includes("video")
+    ? "Video-based learning"
+    : normalizedText.includes("hands-on") || normalizedText.includes("lab")
+      ? "Hands-on practice"
+      : normalizedText.includes("text")
+        ? "Text-based learning"
+        : "A balanced mix";
+  const productNames = [
+    "Microsoft Copilot Studio",
+    "Microsoft Foundry",
+    "Microsoft 365 Copilot",
+    "Scout",
+    "Cowork",
+  ];
+  const products = productNames.filter((product) =>
+    normalizedText.includes(product.toLowerCase()),
+  );
+
+  return { goal, time, styles, products };
+}
+
+function submitTaskPrompt(text) {
+  const selections = parseTaskPrompt(text);
+  learner.goal = selections.goal;
+  learner.time = selections.time;
+  learner.styles = selections.styles;
+  learner.products = selections.products;
+  appendUserMessage(text);
+  input.value = "";
+  setSuggestions([]);
+  showNowButton.hidden = true;
+  showNowNote.hidden = true;
+  progressMessage.textContent = "Matching your prompt to a task playlist…";
+  window.setTimeout(showTaskResults, 250);
+}
+
+function createTaskPromptExample(goal) {
+  const product =
+    goal === "Automate a repeatable business process"
+      ? "Microsoft Copilot Studio"
+      : "Microsoft Foundry";
+  const goalPhrase = `${goal.charAt(0).toLowerCase()}${goal.slice(1)}`;
+
+  return `I want to ${goalPhrase}. I have 30–60 minutes, prefer a balanced mix, and want to learn more about ${product}.`;
+}
+
+function showTaskPrompt() {
+  step = "taskPrompt";
+  updateProgress(refinementSteps.taskTime);
+  appendAssistantMessage(`
+    <p><strong>Want to shape this playlist further?</strong></p>
+    <p>This example adds how much time you have, how you like to learn, and a product you want to know more about. Edit it or get started now.</p>
+  `);
+  setSuggestions([]);
+  showNowButton.textContent = "Get started now";
+  showNowButton.hidden = false;
+  showNowNote.hidden = true;
+  input.value = createTaskPromptExample(learner.goal);
+  input.placeholder = "Describe your task, time, learning style, and products...";
+  input.focus();
 }
 
 function appendUserMessage(text) {
@@ -779,6 +940,8 @@ function showTaskProductSuggestions() {
 function showStep(nextStep) {
   step = nextStep;
   updateProgress(refinementSteps[nextStep] || 0);
+  showNowButton.hidden = true;
+  showNowNote.hidden = true;
   const flow = flows[nextStep];
   appendAssistantMessage(flow.html);
   setSuggestions(flow.options);
@@ -882,6 +1045,7 @@ function personalizeContentForProduct(content) {
 
 function showFoundationResults() {
   step = "foundationResults";
+  document.body.classList.toggle("demo-results-visible", isDemoMode);
   updateProgress();
   showNowButton.hidden = true;
   showNowNote.hidden = true;
@@ -971,7 +1135,7 @@ function showFoundationResults() {
     formatSelections[index % formatSelections.length],
   ]);
   const showDecisionGuidance =
-    !learner.styles &&
+    (!learner.styles || selectedLearningPreference === "A balanced mix") &&
     new Set(selectedResources.map(([format]) => format)).size > 1;
   const levelSelections =
     learner.filterLevels.length > 0
@@ -1033,6 +1197,9 @@ function showFoundationResults() {
           <button type="button" data-result-layout="below" aria-pressed="true">
             Details below
           </button>
+          <button type="button" data-result-layout="cards" aria-pressed="false">
+            Three cards
+          </button>
         </div>
       </div>
       <div class="starter-option-list" aria-label="Recommended learning options">
@@ -1042,7 +1209,7 @@ function showFoundationResults() {
   `;
   let nextPrompt = "";
 
-  if (!learner.goal) {
+  if (!isDemoMode && !learner.goal) {
     nextPrompt = `
       <p><strong>Want to make this playlist more your style?</strong></p>
       <p>What do you want to accomplish with ${topic}?</p>
@@ -1122,7 +1289,12 @@ function showFoundationResults() {
     </div>
   `);
 
-  if (!learner.goal) {
+  if (isDemoMode) {
+    step = "foundationResults";
+    updateProgress();
+    setSuggestions([["personalize", "Personalize these results"]]);
+    input.placeholder = "Personalize this starter playlist...";
+  } else if (!learner.goal) {
     step = "foundationGoal";
     updateProgress(refinementSteps.foundationGoal);
     setSuggestions(flows.foundationGoal.options);
@@ -1146,13 +1318,14 @@ function showFoundationResults() {
     input.placeholder = "Ask for a different type of result...";
   }
 
-  if (nextPrompt) {
+  if (nextPrompt && !isDemoMode) {
     appendAssistantMessage(nextPrompt);
   }
 }
 
 function showTaskResults() {
   step = "taskResults";
+  document.body.classList.toggle("demo-results-visible", isDemoMode);
   updateProgress();
   setSuggestions([]);
   const goal = learner.goal;
@@ -1325,6 +1498,7 @@ function showTaskResults() {
         <div role="group" aria-label="Compare result layouts">
           <button type="button" data-result-layout="right" aria-pressed="false">Details right</button>
           <button type="button" data-result-layout="below" aria-pressed="true">Details below</button>
+          <button type="button" data-result-layout="cards" aria-pressed="false">Three cards</button>
         </div>
       </div>
       <div class="starter-option-list" aria-label="Task learning options">
@@ -1507,15 +1681,7 @@ function advance(value) {
 
   if (step === "foundationTopic") {
     learner.topic = value;
-    step = "foundationGoal";
-    updateProgress(refinementSteps.foundationGoal);
-    appendAssistantMessage(
-      `<p><strong>What do you want to accomplish with ${escapeHtml(value)}?</strong></p><p>Choose a goal or enter your own.</p>`,
-    );
-    setSuggestions(flows.foundationGoal.options);
-    showStarterOption();
-    input.placeholder = "Or describe another goal...";
-    input.focus();
+    showFoundationPrompt();
     return;
   }
 
@@ -1551,8 +1717,7 @@ function advance(value) {
 
   if (step === "taskGoal") {
     learner.goal = value;
-    showStep("taskTime");
-    input.placeholder = "Or enter another amount of time...";
+    showTaskPrompt();
     return;
   }
 
@@ -1640,8 +1805,6 @@ function advance(value) {
     learner.filterStyles = [];
     learner.filterProducts = [];
     learner.filterTopicSelections = [];
-    step = "taskGoal";
-    updateProgress(refinementSteps.taskGoal);
     appendAssistantMessage(`
       <p><strong>Let’s change this to a task-based path.</strong></p>
       ${
@@ -1649,11 +1812,8 @@ function advance(value) {
           ? `<p>I’ll keep your interest in <strong>${escapeHtml(foundationTopic)}</strong> in mind.</p>`
           : ""
       }
-      ${flows.taskGoal.html}
     `);
-    setSuggestions(flows.taskGoal.options);
-    input.placeholder = "Or describe the outcome you need...";
-    input.focus();
+    window.setTimeout(() => showStep("taskGoal"), 250);
     return;
   }
 
@@ -1719,6 +1879,18 @@ suggestions.addEventListener("click", (event) => {
 });
 
 showNowButton.addEventListener("click", () => {
+  if (step === "foundationPrompt") {
+    submitFoundationPrompt(
+      input.value.trim() || createFoundationPromptExample(learner.topic),
+    );
+    return;
+  }
+
+  if (step === "taskPrompt") {
+    submitTaskPrompt(input.value.trim() || createTaskPromptExample(learner.goal));
+    return;
+  }
+
   appendUserMessage(showNowButton.textContent);
   showNowButton.hidden = true;
   showNowNote.hidden = true;
@@ -1814,6 +1986,10 @@ messages.addEventListener("click", (event) => {
       "details-below",
       layoutOption.dataset.resultLayout === "below",
     );
+    resultShell.classList.toggle(
+      "card-grid",
+      layoutOption.dataset.resultLayout === "cards",
+    );
     resultShell.querySelectorAll("[data-result-layout]").forEach((option) => {
       option.setAttribute(
         "aria-pressed",
@@ -1878,6 +2054,16 @@ composer.addEventListener("submit", (event) => {
 
   if (runHappyPathShortcut(text)) {
     input.value = "";
+    return;
+  }
+
+  if (step === "foundationPrompt") {
+    submitFoundationPrompt(text);
+    return;
+  }
+
+  if (step === "taskPrompt") {
+    submitTaskPrompt(text);
     return;
   }
 

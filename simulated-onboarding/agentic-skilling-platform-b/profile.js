@@ -258,6 +258,22 @@ if (interestsContainer.childElementCount === 0) {
   renderInterests(profile);
 }
 
+container.addEventListener("click", (event) => {
+  const layoutOption = event.target.closest("[data-result-layout]");
+  if (!layoutOption) return;
+
+  const resultShell = layoutOption.closest(".hybrid-result-shell");
+  const selectedLayout = layoutOption.dataset.resultLayout;
+  resultShell.classList.toggle("details-below", selectedLayout === "below");
+  resultShell.classList.toggle("card-grid", selectedLayout === "cards");
+  resultShell.querySelectorAll("[data-result-layout]").forEach((option) => {
+    option.setAttribute(
+      "aria-pressed",
+      String(option.dataset.resultLayout === selectedLayout),
+    );
+  });
+});
+
 if (playlists.length === 0 && container.childElementCount === 0) {
   const message = document.createElement("p");
   message.className = "empty-state";

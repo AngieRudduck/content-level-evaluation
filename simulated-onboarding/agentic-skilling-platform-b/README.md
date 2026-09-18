@@ -8,11 +8,13 @@ The prototype uses plain HTML, CSS, and JavaScript. It has no package dependenci
 
 1. Open `index.html` in a browser.
 2. Select a foundational or task-based path.
-3. Complete the prompts or use one of the quick-jump prompts.
+3. Use either preloaded natural-language prompt or enter a quick-jump prompt.
 4. Select **Save playlist** to expose the optional profile-preference controls.
 5. Open **View my playlists** to inspect the saved and seeded playlists.
 
 For detailed scenarios and expected results, see [HAPPY-PATH-TESTS.md](./HAPPY-PATH-TESTS.md).
+
+For two standalone narrated demos that can also run sequentially in about 30 seconds, see [DEMO-SCRIPT.md](./DEMO-SCRIPT.md). Open `index.html?demo=1` at 1280 × 720 to use the compact recording layout. Demo mode hides the **Skills Navigator** header and centers the narrower playlist cards. The included reference screenshots are native 1600 × 900 captures for sharp scaling to a 1280 × 720 video.
 
 ## Use the quick-jump prompts
 
@@ -32,8 +34,8 @@ Each prompt resets the visible conversation and opens the requested generated re
 
 The prototype supports these entry points:
 
-- **Build foundational knowledge:** Collects a topic, goal, time range, and learning style.
-- **Task-based paths:** Collects a task, time range, learning style, and optional products.
+- **Build foundational knowledge:** Captures a topic first, then preloads an editable natural-language prompt containing that topic, a goal, time range, and learning style. The default balanced mix returns a Module, Video, and Lab.
+- **Task-based paths:** Captures a task first, then preloads an editable natural-language prompt containing that task, a time range, learning style, and product. **Get started now** matches the sentence directly to a playlist.
 - **Prepare for a credential:** Remains a placeholder.
 
 The six supported golden paths and all expected recommendation mappings are documented in [HAPPY-PATH-TESTS.md](./HAPPY-PATH-TESTS.md).
@@ -69,7 +71,7 @@ After a learner saves a playlist, the same selected metadata appears in **Want m
 - Generative AI, Understand the key concepts, 15–30 minutes, Module.
 - Build and deploy an AI agent, 30–60 minutes, Module, Microsoft Foundry.
 
-The saved cards use the same visual treatment as generated cards. Their titles open `content.html`, the internal mock content page. No playlist title links directly to Microsoft Learn.
+The saved cards use the same visual treatment as generated cards. Every saved playlist has independent **Details right**, **Details below**, and **Three cards** layout controls. Card titles open `content.html`, the internal mock content page. No playlist title links directly to Microsoft Learn.
 
 Use the reset controls independently:
 
@@ -104,6 +106,7 @@ Version A and Version B share the playlist and profile keys. Avoid clearing all 
 | `content.html` | Internal mock content-detail page. |
 | `content.js` | Mock content-detail rendering and derived learning metadata. |
 | `HAPPY-PATH-TESTS.md` | Manual tests, quick-jump prompts, and permutation coverage. |
+| `DEMO-SCRIPT.md` | Two standalone narrations, timed click sequences, screenshots, and 1280 × 720 recording guidance. |
 | `DESIGN-DECISIONS.md` | Product and interaction decisions made during prototyping. |
 
 ## Preserve these implementation decisions
@@ -115,6 +118,7 @@ Version A and Version B share the playlist and profile keys. Avoid clearing all 
 - Keep playlist-page links internal to the mock content page.
 - Keep generated recommendation links pointed at Microsoft Learn.
 - Keep the generated and saved card layouts visually consistent.
+- Keep **Details right**, **Details below**, and **Three cards** available as generated-playlist layout previews.
 - Keep Level, Duration, Format, Products, and Skills aligned across personalization and preferences.
 
 ## Validate changes
@@ -137,3 +141,4 @@ Run the scenarios in [HAPPY-PATH-TESTS.md](./HAPPY-PATH-TESTS.md) after changes 
 - Video and Lab results reuse module-backed catalog entries.
 - Durations, formats, levels, prerequisites, objectives, roles, and skills are prototype metadata.
 - The mock content page represents the future content experience. It isn't a complete learning module.
+- Demo mode is a recording aid. It hides the **Skills Navigator** header, conversation history, the layout switcher, and the save panel, but it doesn't change the standard experience.

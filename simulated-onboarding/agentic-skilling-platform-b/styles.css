@@ -353,7 +353,7 @@ button {
   padding: 2px;
   background: var(--surface-subtle);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 8px;
 }
 
 .result-layout-switch button {
@@ -362,7 +362,7 @@ button {
   font-size: 11px;
   background: transparent;
   border: 0;
-  border-radius: 999px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
@@ -416,7 +416,7 @@ button {
   font-size: 11px;
   font-weight: 700;
   background: var(--surface-subtle);
-  border-radius: 999px;
+  border-radius: 8px;
 }
 
 .task-match-label.is-closest {
@@ -538,6 +538,87 @@ button {
 }
 
 .hybrid-result-shell.details-below .metadata-item + .metadata-item {
+  margin: 0;
+  border-left: 0;
+}
+
+.hybrid-result-shell.card-grid .starter-option-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.hybrid-result-shell.card-grid .starter-option-card {
+  min-height: 0;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+}
+
+.hybrid-result-shell.card-grid .starter-option-content {
+  grid-row: 2;
+  padding: 14px;
+}
+
+.hybrid-result-shell.card-grid .starter-choice-guidance {
+  grid-row: 1;
+}
+
+.hybrid-result-shell.card-grid .starter-option-card h3 {
+  overflow: visible;
+  font-size: 1rem;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.hybrid-result-shell.card-grid .starter-option-card h3 a {
+  display: block;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.hybrid-result-shell.card-grid .starter-option-content > p {
+  display: block;
+  height: auto;
+  overflow: visible;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  -webkit-line-clamp: unset;
+}
+
+.hybrid-result-shell.card-grid .starter-option-details {
+  grid-row: 3;
+  height: 45px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-flow: row nowrap;
+  gap: 6px;
+  overflow: hidden;
+  padding: 10px 12px;
+  background: var(--option-tint);
+  border-top: 1px solid var(--border);
+  border-left: 0;
+}
+
+.hybrid-result-shell.card-grid .metadata-item {
+  display: inline-flex;
+  min-width: 0;
+  gap: 4px;
+  padding: 3px 5px;
+  overflow: hidden;
+  color: var(--option-accent);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: var(--surface);
+  border-radius: 6px;
+}
+
+.hybrid-result-shell.card-grid .metadata-item::before {
+  display: none;
+}
+
+.hybrid-result-shell.card-grid .metadata-item + .metadata-item {
   margin: 0;
   border-left: 0;
 }
@@ -690,7 +771,7 @@ button {
   font-weight: 600;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
@@ -1115,7 +1196,7 @@ button {
   font-weight: 650;
   background: var(--surface);
   border: 1px solid var(--brand-border);
-  border-radius: 999px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
@@ -1147,22 +1228,24 @@ button {
 }
 
 .show-now-button {
-  padding: 0;
-  margin: 0 6px 12px 0;
-  color: var(--link);
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 5px 12px;
+  margin: 0 8px 12px 0;
+  color: #fff;
   font-size: 14px;
-  font-weight: 600;
-  text-align: left;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  background: transparent;
-  border: 0;
+  font-weight: 650;
+  background: var(--brand);
+  border: 1px solid var(--brand);
+  border-radius: 8px;
   cursor: pointer;
 }
 
 .show-now-button:hover {
-  color: var(--brand-hover);
-  text-decoration-thickness: 2px;
+  color: #fff;
+  background: var(--brand-hover);
+  border-color: var(--brand-hover);
 }
 
 .show-now-button[hidden] {
@@ -1321,6 +1404,15 @@ a:focus-visible {
 
   .starter-option-card {
     grid-template-columns: 1fr;
+  }
+
+  .hybrid-result-shell.card-grid .starter-option-list {
+    grid-template-columns: 1fr;
+  }
+
+  .hybrid-result-shell.card-grid .starter-option-card {
+    height: auto;
+    min-height: 220px;
   }
 
   .result-layout-switch {
@@ -1584,15 +1676,18 @@ body {
   box-shadow: 0 8px 28px rgb(51 43 68 / 8%);
 }
 
+.path-choices button,
 .restart-button,
 .send-button,
 .suggestions button,
+.show-now-button,
 .interest-option,
 .format-pill,
 .result-layout-switch > div,
 .result-layout-switch button,
 .playlist-actions .primary-action,
-.preference-actions button {
+.preference-actions button,
+.profile-reset-actions button {
   border-radius: 8px;
 }
 
@@ -1669,6 +1764,125 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+body.demo-mode.demo-results-visible {
+  overflow: hidden;
+}
+
+body.demo-mode .app-header {
+  display: none;
+}
+
+body.demo-mode.demo-results-visible .conversation {
+  overflow: hidden;
+  height: 100vh;
+  min-height: 0;
+  padding: 8px 28px 70px;
+}
+
+body.demo-mode.demo-results-visible .messages {
+  gap: 0;
+}
+
+body.demo-mode.demo-results-visible .messages > :not(:last-child),
+body.demo-mode.demo-results-visible .assistant-identity,
+body.demo-mode.demo-results-visible .result-layout-switch,
+body.demo-mode.demo-results-visible .profile-save-panel,
+body.demo-mode.demo-results-visible .refinement-progress,
+body.demo-mode.demo-results-visible .composer,
+body.demo-mode.demo-results-visible .composer-note {
+  display: none;
+}
+
+body.demo-mode.demo-results-visible .assistant-message {
+  padding: 0;
+}
+
+body.demo-mode.demo-results-visible .message-content {
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+body.demo-mode.demo-results-visible .result-title {
+  margin-bottom: 4px;
+  font-size: 1.1rem;
+}
+
+body.demo-mode.demo-results-visible .result-rationale {
+  max-width: none;
+  margin-bottom: 4px;
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+
+body.demo-mode.demo-results-visible .result-order-guidance {
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+}
+
+body.demo-mode.demo-results-visible .hybrid-result-shell,
+body.demo-mode.demo-results-visible .starter-option-list {
+  margin-top: 0;
+}
+
+body.demo-mode.demo-results-visible .starter-option-list {
+  gap: 5px;
+}
+
+body.demo-mode.demo-results-visible .starter-option-content {
+  padding: 5px 10px 3px;
+}
+
+body.demo-mode.demo-results-visible .starter-option-card h3 {
+  margin-bottom: 2px;
+  font-size: 0.88rem;
+}
+
+body.demo-mode.demo-results-visible .starter-option-content > p {
+  display: none;
+}
+
+body.demo-mode.demo-results-visible .task-match-label {
+  padding: 1px 6px;
+  margin-bottom: 3px;
+  font-size: 0.68rem;
+}
+
+body.demo-mode.demo-results-visible
+  .hybrid-result-shell.details-below
+  .starter-option-details {
+  gap: 4px;
+  margin-inline: 10px;
+  padding-bottom: 6px;
+}
+
+body.demo-mode.demo-results-visible
+  .hybrid-result-shell.details-below
+  .metadata-item {
+  padding: 2px 6px;
+  font-size: 0.7rem;
+}
+
+body.demo-mode.demo-results-visible .starter-choice-guidance {
+  padding: 4px 10px;
+  font-size: 0.72rem;
+}
+
+body.demo-mode.demo-results-visible .composer-shell {
+  padding: 8px 28px;
+}
+
+body.demo-mode.demo-results-visible .suggestions {
+  margin: 0;
+}
+
+body.demo-mode.demo-results-visible .suggestions button {
+  min-height: 34px;
+  padding: 5px 12px;
+  font-size: 0.82rem;
+  box-shadow: 0 0 0 3px rgb(107 85 163 / 12%);
 }
 
 @media (forced-colors: active) {

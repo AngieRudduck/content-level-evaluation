@@ -10,7 +10,7 @@ This log records product and interface decisions for the Skills Navigator protot
 
 **Rationale:** Large repeated bubbles add whitespace and nested surfaces. The rail preserves turn recognition while making the experience feel more like a modern personalized feed.
 
-**Decision:** Use rounded rectangles with a consistent 8–10 pixel radius for interactive controls and cards. Reserve fully rounded shapes for the progress bar.
+**Decision:** Use rounded rectangles with a consistent 8-pixel radius for interactive controls. Reserve fully rounded shapes for the progress bar.
 
 **Rationale:** A consistent shape language feels more deliberate and remains familiar across age groups.
 
@@ -50,26 +50,29 @@ This log records product and interface decisions for the Skills Navigator protot
 
 ## Foundational discovery flow
 
-**Decision:** Use no more than five criteria:
+**Decision:** Capture the foundational topic first. After that selection, preload one editable natural-language prompt containing:
 
-1. Learning path.
-2. Topic or product.
-3. Goal.
-4. Available time.
-5. Preferred format.
+1. Topic or product.
+2. Goal.
+3. Available time.
+4. Preferred format.
 
-**Rationale:** These criteria materially affect relevance while keeping the path short.
+For Generative AI, preload the established happy-path example: “I want to understand the key concepts of generative AI. I have 15–30 minutes and prefer a balanced mix.” Let the learner edit the sentence or select **Get started now** to match it directly to a playlist.
+
+**Rationale:** The platform needs at least one learner-provided subject before it can responsibly offer results. After capturing that topic, a complete example demonstrates the remaining input while avoiding separate goal, time, and format transitions.
 
 ## Task-based discovery flow
 
-**Decision:** Ask for task criteria in this order:
+**Decision:** Capture the task goal first. After that selection, preload one editable natural-language prompt containing:
 
 1. Goal or problem to solve.
 2. Available time.
 3. Preferred format.
-4. Optional product context.
+4. Product context, when relevant.
 
-**Rationale:** Task-based learners arrive with an outcome in mind. Product context can improve matching, but it shouldn't be required before the platform understands the goal.
+For Build and deploy an AI agent, preload the established happy-path example: “I want to build and deploy an AI agent. I have 30–60 minutes, prefer a balanced mix, and want to learn more about Microsoft Foundry.” Let the learner edit the sentence or select **Get started now** to match it directly to a playlist.
+
+**Rationale:** Task-based learners arrive with an outcome in mind, so the platform captures that outcome before offering a shortcut. A complete example then demonstrates the remaining input while avoiding separate time, format, and product transitions.
 
 **Decision:** Return three starting points centered on Advanced (L400):
 
@@ -79,35 +82,21 @@ This log records product and interface decisions for the Skills Navigator protot
 
 **Rationale:** Adjacent levels let learners calibrate their own starting point instead of relying on a single inferred proficiency level.
 
-## Suggested responses
+## One-step starter results
 
-**Decision:** Present three suggestions for topic, goal, and time. Present four learning-style suggestions, including **A balanced mix**. Use the same time and learning-style choices in foundational and task-based flows.
+**Decision:** Offer **Get started now** only after the learner selects a foundational topic or task goal and the corresponding preloaded prompt appears. Never offer the shortcut immediately after the initial path selection.
 
-**Rationale:** Three choices support fast scanning without forcing weak options for visual symmetry.
+**Rationale:** Learners can see a useful result immediately, then edit the prompt or use result personalization when they need more control.
 
-**Not chosen:** Four or more suggestions at every step. Additional choices increase comparison effort without consistently improving the result.
-
-## Early results
-
-**Decision:** Offer **Get started now** as a secondary action during personalization.
-
-**Rationale:** Learners can stop answering questions and receive results based on the information already provided.
-
-**Default behavior:** Return three alternatives, each 30 minutes or less:
+**Foundational default behavior:** Return three alternatives, each 30 minutes or less:
 
 - Text-based learning.
 - Video-based learning.
 - Hands-on practice.
 
-## Progressive personalization
-
-**Decision:** After early results, present the next unanswered question in a separate assistant message.
-
-**Rationale:** Learners can continue through goal, duration, and format without selecting a separate “personalize” action. A separate message distinguishes the result from the next question.
-
 ## Refinement progress
 
-**Decision:** Show a compact progress bar labeled “Question X of 4” during the foundational discovery flow.
+**Decision:** Show **Question 1 of 4** while capturing the topic or task and **Question 2 of 4** with the preloaded natural-language shortcut. Preserve progress context for learners who continue into **Personalize these results**.
 
 **Rationale:** The indicator sets expectations, shows that the interaction is short, and helps learners decide whether to continue or request results early.
 
@@ -187,9 +176,13 @@ This log records product and interface decisions for the Skills Navigator protot
 
 **Rationale:** Experience language helps learners compare formats while the adjacent metadata provides the duration without repetition or subjective classifications such as short.
 
-**Prototype comparison:** Provide **Details right** and **Details below** views. The second view places duration, format, and level in one compact line beneath the title and description.
+**Prototype comparison:** Provide **Details right**, **Details below**, and **Three cards** views. **Details below** places duration, format, and level in one compact line beneath the title and description. **Three cards** presents the same recommendations as equal-height columns with single-line ellipsized titles, consistent description regions, and tinted metadata footers.
 
-**Decision:** Use **Details below** as the default result layout and retain **Details right** as an optional comparison view.
+**Decision:** Use **Details below** as the default result layout and retain **Details right** and **Three cards** as optional comparison views.
+
+**Decision:** Repeat the same layout control on every saved playlist. Keep each playlist's selected layout independent so learners can compare presentations without changing the rest of the page.
+
+**Decision:** Never truncate playlist-card content. In **Three cards**, show every title and complete description without ellipses, then let the tallest card determine one shared height for the row. Keep labels and metadata contained in the footer in every layout.
 
 **Decision:** In **Details below**, show only the metadata values separated by dividers. Keep the Duration, Format, and Level labels in **Details right**.
 
@@ -231,6 +224,10 @@ This log records product and interface decisions for the Skills Navigator protot
 **Decision:** Provide separate **Reset playlists** and **Reset preferences** controls. Resetting playlists also suppresses the seeded prototype playlists on later reloads until another playlist is explicitly saved.
 
 **Decision:** Support exact pasteable quick-jump prompts for the two mocked happy paths so prototype testing can bypass the question sequence without changing normal learner behavior.
+
+**Decision:** Support a 1280 × 720 recording mode through `index.html?demo=1`. Keep question screens unchanged, then hide prior conversation turns and secondary result controls after generation so the three cards and **Personalize these results** fit in one frame.
+
+**Rationale:** Browser device emulation doesn't provide reliable zoom control for this prototype. A URL-gated compact layout produces repeatable video framing without reducing the readability or spacing of the normal experience.
 
 ## Saved interests
 
@@ -304,7 +301,7 @@ This log records product and interface decisions for the Skills Navigator protot
 
 ## Switching from foundational to task-based learning
 
-**Decision:** Offer **Change to task-based paths** after a learner completes the foundational questions. Preserve the selected topic as context, then begin the task flow at its goal question.
+**Decision:** Offer **Change to task-based paths** after a learner completes the foundational questions. Preserve the selected topic as context, then open the same preloaded natural-language task prompt used by the primary task entry point.
 
 **Rationale:** Learners might recognize that they need applied learning only after they see foundational recommendations. Switching paths should preserve useful context without carrying over incompatible answers such as duration, learning style, or task goal.
 

@@ -46,10 +46,26 @@
       <article class="saved-playlist">
         <h2></h2>
         <p class="saved-playlist-meta"></p>
-        <div
-          class="starter-option-list hybrid-result-shell details-below"
-          aria-label="Saved playlist content"
-        ></div>
+        <div class="hybrid-result-shell details-below">
+          <div class="result-layout-switch">
+            <span>Layout preview</span>
+            <div role="group" aria-label="Compare saved playlist layouts">
+              <button type="button" data-result-layout="right" aria-pressed="false">
+                Details right
+              </button>
+              <button type="button" data-result-layout="below" aria-pressed="true">
+                Details below
+              </button>
+              <button type="button" data-result-layout="cards" aria-pressed="false">
+                Three cards
+              </button>
+            </div>
+          </div>
+          <div
+            class="starter-option-list"
+            aria-label="Saved playlist content"
+          ></div>
+        </div>
       </article>
     </template>
 

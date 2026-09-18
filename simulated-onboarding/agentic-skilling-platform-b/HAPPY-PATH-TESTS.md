@@ -19,6 +19,7 @@ The shortcuts are case-insensitive and accept a hyphen or en dash in the time ra
 ## Prototype testing tips
 
 - Open `index.html` directly. The prototype doesn't require a local server, package installation, or build.
+- Open `index.html?demo=1` at 1280 × 720 for the compact recording view. See [DEMO-SCRIPT.md](./DEMO-SCRIPT.md) for two standalone scripts, timed actions, and reference screenshots.
 - Wait for each response animation to finish before you select the next option.
 - Use **Restart** on the discovery page to clear the conversation and learner selections.
 - Use **Reset playlists** on **My playlists** to clear both stored and seeded playlists. The reset persists after a page refresh.
@@ -30,6 +31,23 @@ The shortcuts are case-insensitive and accept a hyphen or en dash in the time ra
 - Select a related Product or Skill to verify that additional connected choices appear without being selected automatically.
 - Refresh the page if browser animation timing leaves a control temporarily unavailable.
 - Don't treat Video and Lab cards as separate source assets. They are simulated presentations of module-backed catalog records.
+
+## Test the compact demo view
+
+1. Open `index.html?demo=1` in a 1280 × 720 viewport.
+2. Select **Build foundational knowledge**.
+3. Select **What is generative AI?**.
+4. Select **Get started now**.
+
+Confirm that:
+
+- Previous conversation turns are hidden after the playlist appears.
+- All three result cards fit above the fixed composer.
+- **Personalize these results** remains visible as the suggested prompt.
+- The **Skills Navigator** header, including **Version B** and **Restart**, isn't visible in the recording view.
+- The save panel and layout preview are hidden only in demo mode.
+
+Select **Restart**, then complete the Build and deploy an AI agent task path. Confirm that all three task cards and **Personalize these results** fit in the same 1280 × 720 frame.
 
 ## Test environment
 
@@ -64,18 +82,18 @@ Expected format behavior:
 
 | Selected learning style | Result format | Guidance in a mixed set |
 |---|---|---|
-| Text-based learning | Module | Read at your own pace. |
-| Video-based learning | Video | Visual walkthrough. |
-| Hands-on exercise | Lab | Guided practice. |
+| Text-based learning | Module | Read at your own pace |
+| Video-based learning | Video | Visual walkthrough |
+| Hands-on exercise | Lab | Guided practice |
 | A balanced mix | Module, Video, and Lab | Show the corresponding guidance on each card. |
 
 ## Golden path 1: Generative AI foundation
 
 1. Select **Build foundational knowledge**.
-2. Select **What is generative AI?**
-3. Select **Understand the key concepts**.
-4. Select **15–30 minutes**.
-5. Select **Text-based learning**.
+2. Confirm **Get started now** isn't visible.
+3. Select **What is generative AI?**
+4. Confirm the preloaded prompt says: “I want to understand the key concepts of generative AI. I have 15–30 minutes and prefer a balanced mix.”
+5. Select **Get started now**.
 
 Expected recommendations:
 
@@ -86,18 +104,19 @@ Expected recommendations:
 Expected presentation:
 
 - Durations are 18, 22, and 28 minutes.
-- Every result displays **Module**.
-- No “Choose this…” guidance appears because every result has the same format.
+- Results display **Module**, **Video**, and **Lab**.
+- Each result displays its corresponding modality guidance.
 - The default layout is **Details below**.
+- The layout preview can switch among **Details right**, **Details below**, and **Three cards**.
+- **Three cards** displays one equal-height column per recommendation with a single-line ellipsized title and metadata anchored in a uniform footer.
 - **Personalize these results** and **Change to task-based paths** are available.
 
 ## Golden path 2: Effective Copilot prompts foundation
 
 1. Select **Build foundational knowledge**.
 2. Select **Write effective Copilot prompts**.
-3. Select **Explore common uses and scenarios**.
-4. Select **30–60 minutes**.
-5. Select **Video-based learning**.
+3. Replace the preloaded prompt with: “I want to explore common uses for effective Copilot prompts. I have 30–60 minutes and prefer video-based learning.”
+4. Select **Send**.
 
 Expected recommendations:
 
@@ -115,9 +134,8 @@ Expected presentation:
 
 1. Select **Build foundational knowledge**.
 2. Select **What are AI agents?**
-3. Select **Understand benefits and limitations**.
-4. Select **More than 1 hour**.
-5. Select **Hands-on exercise**.
+3. Replace the preloaded prompt with: “I want to understand the benefits and limitations of AI agents. I have more than 1 hour and prefer hands-on learning.”
+4. Select **Send**.
 
 Expected recommendations:
 
@@ -134,11 +152,10 @@ Expected presentation:
 ## Golden path 4: Build and deploy an AI agent
 
 1. Select **Task-based paths**.
-2. Select **Build and deploy an AI agent**.
-3. Select **30–60 minutes**.
-4. Select **Text-based learning**.
-5. Select **Microsoft Foundry**.
-6. Select **Use selected products**.
+2. Confirm **Get started now** isn't visible.
+3. Select **Build and deploy an AI agent**.
+4. Confirm the preloaded prompt says: “I want to build and deploy an AI agent. I have 30–60 minutes, prefer a balanced mix, and want to learn more about Microsoft Foundry.”
+5. Select **Get started now**.
 
 Expected recommendations:
 
@@ -150,8 +167,8 @@ Expected recommendations:
 
 Expected presentation:
 
-- Durations are 30, 45, and 60 minutes.
-- Every result displays **Module**.
+- Durations are 15, 45, and 60 minutes.
+- Results display **Video**, **Module**, and **Lab**.
 - The rationale mentions Microsoft Foundry.
 - **Personalize these results** is available.
 - No **Build a learning plan** prompt appears.
@@ -160,10 +177,8 @@ Expected presentation:
 
 1. Select **Task-based paths**.
 2. Select **Automate a repeatable business process**.
-3. Select **15–30 minutes**.
-4. Select **Video-based learning**.
-5. Select **Microsoft Copilot Studio**.
-6. Select **Use selected products**.
+3. Replace the preloaded prompt with: “I want to automate a repeatable business process. I have 15–30 minutes, prefer video-based learning, and use Microsoft Copilot Studio.”
+4. Select **Send**.
 
 Expected recommendations:
 
@@ -183,9 +198,8 @@ Expected presentation:
 
 1. Select **Task-based paths**.
 2. Select **Connect enterprise data to AI experiences**.
-3. Select **More than 1 hour**.
-4. Select **Hands-on exercise**.
-5. Select **Skip products**.
+3. Replace the preloaded prompt with: “I want to connect enterprise data to AI experiences. I have more than 1 hour and prefer hands-on learning.”
+4. Select **Send**.
 
 Expected recommendations:
 
@@ -201,23 +215,17 @@ Expected presentation:
 - Every result displays **Lab**.
 - The context states **No product preference**.
 
-## Test foundational early results
+## Test the preloaded foundational prompt
 
-The **Get started now** option appears after the learner selects a topic and remains available while additional foundational questions are unanswered.
-
-Test these stopping points:
-
-1. Select only a topic, then select **Get started now**.
-2. Select a topic and goal, then select **Get started now**.
-3. Select a topic, goal, and time, then select **Get started now**.
+After the learner selects a topic, **Get started now** appears with one complete, editable sentence. Progress advances from **Question 1 of 4** to **Question 2 of 4**.
 
 Expected behavior:
 
-- The selected topic determines the recommendations.
-- Missing time defaults to **30 minutes or less**.
-- Missing learning style returns one **Module**, one **Video**, and one **Lab**.
+- The prompt contains topic, goal, time, and learning style.
+- **Get started now** isn't available before a topic is selected.
+- The preloaded balanced mix returns one **Module**, one **Video**, and one **Lab**.
 - Each result includes the appropriate short guidance because the set contains mixed formats.
-- The next unanswered question appears after the recommendations.
+- No unanswered follow-up question appears after the recommendations.
 
 ## Test result personalization
 
@@ -253,9 +261,10 @@ Expected behavior:
 
 - The conversation acknowledges the change.
 - The original topic is retained as context.
-- The interface asks, “What do you want to accomplish?”
-- Progress resets to **Question 1 of 4**.
-- Foundational goal, time, and format selections don't carry into the task questions.
+- The interface first asks the learner to select a task.
+- **Get started now** isn't available until the task is selected.
+- The selected task opens its preloaded sentence at **Question 2 of 4**.
+- Foundational goal, time, and format selections don't carry into the task prompt.
 
 ## Test playlist saving
 
@@ -273,6 +282,9 @@ Expected behavior:
 - An explicitly saved playlist appears in addition to the seeded prototype paths unless it has the same title.
 - Playlist items retain their titles, descriptions, durations, formats, and levels, and their titles open the internal mock content page.
 - Playlist items use the same format-colored card presentation as generated results.
+- Every playlist independently switches among **Details right**, **Details below**, and **Three cards**.
+- Changing one playlist layout doesn't change any other playlist.
+- No label or metadata text spills outside its card. In **Three cards**, every title and complete description remains visible without ellipses, and all three cards use the same height determined by the tallest content.
 - Task playlists retain **More guidance**, **Closest match**, and **Stretch option** labels.
 - Saved interests appear under their appropriate categories.
 - Result personalization and profile preferences both use **Level**, **Duration**, **Format**, **Products**, and **Skills** in that order.
@@ -298,32 +310,10 @@ On **My playlists**:
 
 ### Foundational paths
 
-The complete foundational flow supports:
-
-- 3 topics.
-- 3 goals.
-- 3 time choices.
-- 4 learning styles.
-
-Total: **108 complete permutations**.
-
-Early results add:
-
-- 3 topic-only routes.
-- 9 topic-and-goal routes.
-- 27 topic-goal-and-time routes.
-
-Total including early-result routes: **147 foundational routes**.
+The editable foundational prompt recognizes the three prototype topics, three goals, three time ranges, and four learning styles. Test the three golden-path sentences above rather than treating open-ended natural-language combinations as a finite permutation count.
 
 ### Task-based paths
 
-The complete task flow supports:
-
-- 3 task goals.
-- 3 time choices.
-- 4 learning styles.
-- 8 product combinations, including no product preference.
-
-Total: **288 base task permutations**.
+The editable task prompt recognizes the three prototype task goals, three time ranges, four learning styles, and named product context. Test the three golden-path sentences above rather than treating open-ended natural-language combinations as a finite permutation count.
 
 The six golden paths in this guide cover every recommendation set, every time range, every format, selected and skipped product states, personalization, playlist saving, content details, and the foundational-to-task transition.
