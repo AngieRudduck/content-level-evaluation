@@ -90,10 +90,8 @@ Expected format behavior:
 ## Golden path 1: Generative AI foundation
 
 1. Select **Build foundational knowledge**.
-2. Confirm **Get started now** isn't visible.
-3. Select **What is generative AI?**
-4. Confirm the preloaded prompt says: “I want to understand the key concepts of generative AI. I have 15–30 minutes and prefer a balanced mix.”
-5. Select **Get started now**.
+2. Confirm the first step preloads: “I want to understand the key concepts of generative AI. I have 15–30 minutes and prefer a balanced mix.”
+3. Select **Get started now** to confirm the included topic and preferences.
 
 Expected recommendations:
 
@@ -114,9 +112,8 @@ Expected presentation:
 ## Golden path 2: Effective Copilot prompts foundation
 
 1. Select **Build foundational knowledge**.
-2. Select **Write effective Copilot prompts**.
-3. Replace the preloaded prompt with: “I want to explore common uses for effective Copilot prompts. I have 30–60 minutes and prefer video-based learning.”
-4. Select **Send**.
+2. Replace the preloaded prompt with: “I want to explore common uses for effective Copilot prompts. I have 30–60 minutes and prefer video-based learning.”
+3. Select **Send**.
 
 Expected recommendations:
 
@@ -133,9 +130,8 @@ Expected presentation:
 ## Golden path 3: AI agents foundation
 
 1. Select **Build foundational knowledge**.
-2. Select **What are AI agents?**
-3. Replace the preloaded prompt with: “I want to understand the benefits and limitations of AI agents. I have more than 1 hour and prefer hands-on learning.”
-4. Select **Send**.
+2. Replace the preloaded prompt with: “I want to understand the benefits and limitations of AI agents. I have more than 1 hour and prefer hands-on learning.”
+3. Select **Send**.
 
 Expected recommendations:
 
@@ -152,10 +148,8 @@ Expected presentation:
 ## Golden path 4: Build and deploy an AI agent
 
 1. Select **Task-based paths**.
-2. Confirm **Get started now** isn't visible.
-3. Select **Build and deploy an AI agent**.
-4. Confirm the preloaded prompt says: “I want to build and deploy an AI agent. I have 30–60 minutes, prefer a balanced mix, and want to learn more about Microsoft Foundry.”
-5. Select **Get started now**.
+2. Confirm the first step preloads: “I want to build and deploy an AI agent. I have 30–60 minutes, prefer a balanced mix, and want to learn more about Microsoft Foundry.”
+3. Select **Get started now** to confirm the included task and preferences.
 
 Expected recommendations:
 
@@ -176,9 +170,8 @@ Expected presentation:
 ## Golden path 5: Automate a business process
 
 1. Select **Task-based paths**.
-2. Select **Automate a repeatable business process**.
-3. Replace the preloaded prompt with: “I want to automate a repeatable business process. I have 15–30 minutes, prefer video-based learning, and use Microsoft Copilot Studio.”
-4. Select **Send**.
+2. Replace the preloaded prompt with: “I want to automate a repeatable business process. I have 15–30 minutes, prefer video-based learning, and use Microsoft Copilot Studio.”
+3. Select **Send**.
 
 Expected recommendations:
 
@@ -197,9 +190,8 @@ Expected presentation:
 ## Golden path 6: Connect enterprise data
 
 1. Select **Task-based paths**.
-2. Select **Connect enterprise data to AI experiences**.
-3. Replace the preloaded prompt with: “I want to connect enterprise data to AI experiences. I have more than 1 hour and prefer hands-on learning.”
-4. Select **Send**.
+2. Replace the preloaded prompt with: “I want to connect enterprise data to AI experiences. I have more than 1 hour and prefer hands-on learning.”
+3. Select **Send**.
 
 Expected recommendations:
 
@@ -217,12 +209,12 @@ Expected presentation:
 
 ## Test the preloaded foundational prompt
 
-After the learner selects a topic, **Get started now** appears with one complete, editable sentence. Progress advances from **Question 1 of 4** to **Question 2 of 4**.
+Immediately after the learner selects the foundational path, **Get started now** appears with one complete, editable sentence at **Question 1 of 4**.
 
 Expected behavior:
 
 - The prompt contains topic, goal, time, and learning style.
-- **Get started now** isn't available before a topic is selected.
+- Selecting **Get started now** confirms and captures the topic included in the prompt.
 - The preloaded balanced mix returns one **Module**, one **Video**, and one **Lab**.
 - Each result includes the appropriate short guidance because the set contains mixed formats.
 - No unanswered follow-up question appears after the recommendations.
@@ -261,9 +253,8 @@ Expected behavior:
 
 - The conversation acknowledges the change.
 - The original topic is retained as context.
-- The interface first asks the learner to select a task.
-- **Get started now** isn't available until the task is selected.
-- The selected task opens its preloaded sentence at **Question 2 of 4**.
+- The interface opens the full preloaded task sentence at **Question 1 of 4**.
+- Selecting **Get started now** confirms and captures the task included in the prompt.
 - Foundational goal, time, and format selections don't carry into the task prompt.
 
 ## Test playlist saving

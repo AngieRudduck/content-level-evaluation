@@ -18,9 +18,8 @@ The narration is 27 words and runs for approximately 11–13 seconds.
 
 | Time | On-screen action | Timing note |
 |---|---|---|
-| 0:00–0:02 | Select **Build foundational knowledge**. | Allow 0.5 seconds for the topic choices to appear. |
-| 0:02–0:04 | Select **What is generative AI?**. | Confirm the prompt is preloaded only after this choice. |
-| 0:04–0:07 | Point across the goal, time, and balanced-mix phrases in the prompt. | Don't edit it during this demo. |
+| 0:00–0:03 | Select **Build foundational knowledge**. | Allow 0.5 seconds for the full preloaded prompt to appear. |
+| 0:03–0:07 | Point across the topic, goal, time, and balanced-mix phrases in the prompt. | Don't edit it during this demo. |
 | 0:07–0:09 | Select **Get started now**. | Allow 0.5 seconds for the playlist transition. |
 | 0:09–0:14 | Hold on the mixed-modality playlist and point to **Personalize these results**. | Keep the final frame visible for at least 4 seconds. Don't open personalization. |
 
@@ -42,9 +41,8 @@ The narration is 28 words and runs for approximately 12–14 seconds.
 
 | Time | On-screen action | Timing note |
 |---|---|---|
-| 0:00–0:02 | Select **Task-based paths**. | Allow 0.5 seconds for the task choices to appear. |
-| 0:02–0:04 | Select **Build and deploy an AI agent**. | Confirm the prompt is preloaded only after this choice. |
-| 0:04–0:08 | Point across the time, balanced-mix, and Microsoft Foundry phrases in the prompt. | Don't edit it during this demo. |
+| 0:00–0:03 | Select **Task-based paths**. | Allow 0.5 seconds for the full preloaded prompt to appear. |
+| 0:03–0:08 | Point across the task, time, balanced-mix, and Microsoft Foundry phrases in the prompt. | Don't edit it during this demo. |
 | 0:08–0:10 | Select **Get started now**. | Allow 0.5 seconds for the playlist transition. |
 | 0:10–0:16 | Hold on the playlist and point to **Personalize these results**. | Keep the final result visible for at least 4 seconds. |
 

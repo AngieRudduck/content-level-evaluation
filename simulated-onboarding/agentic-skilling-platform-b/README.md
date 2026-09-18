@@ -34,8 +34,8 @@ Each prompt resets the visible conversation and opens the requested generated re
 
 The prototype supports these entry points:
 
-- **Build foundational knowledge:** Captures a topic first, then preloads an editable natural-language prompt containing that topic, a goal, time range, and learning style. The default balanced mix returns a Module, Video, and Lab.
-- **Task-based paths:** Captures a task first, then preloads an editable natural-language prompt containing that task, a time range, learning style, and product. **Get started now** matches the sentence directly to a playlist.
+- **Build foundational knowledge:** Immediately preloads one editable natural-language prompt containing a topic, goal, time range, and learning style. The default balanced mix returns a Module, Video, and Lab.
+- **Task-based paths:** Immediately preloads one editable natural-language prompt containing a task, time range, learning style, and product. Confirming **Get started now** captures the included task and matches the sentence directly to a playlist.
 - **Prepare for a credential:** Remains a placeholder.
 
 The six supported golden paths and all expected recommendation mappings are documented in [HAPPY-PATH-TESTS.md](./HAPPY-PATH-TESTS.md).

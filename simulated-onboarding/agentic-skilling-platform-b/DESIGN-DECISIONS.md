@@ -50,29 +50,29 @@ This log records product and interface decisions for the Skills Navigator protot
 
 ## Foundational discovery flow
 
-**Decision:** Capture the foundational topic first. After that selection, preload one editable natural-language prompt containing:
+**Decision:** Immediately preload one editable foundational natural-language prompt containing:
 
 1. Topic or product.
 2. Goal.
 3. Available time.
 4. Preferred format.
 
-For Generative AI, preload the established happy-path example: “I want to understand the key concepts of generative AI. I have 15–30 minutes and prefer a balanced mix.” Let the learner edit the sentence or select **Get started now** to match it directly to a playlist.
+Preload the established happy-path example: “I want to understand the key concepts of generative AI. I have 15–30 minutes and prefer a balanced mix.” Let the learner edit the sentence or confirm **Get started now** to capture the included topic and match it directly to a playlist.
 
-**Rationale:** The platform needs at least one learner-provided subject before it can responsibly offer results. After capturing that topic, a complete example demonstrates the remaining input while avoiding separate goal, time, and format transitions.
+**Rationale:** The complete sentence demonstrates the expected input. The learner explicitly confirms or edits the included topic before results are generated, without requiring separate topic, goal, time, and format transitions.
 
 ## Task-based discovery flow
 
-**Decision:** Capture the task goal first. After that selection, preload one editable natural-language prompt containing:
+**Decision:** Immediately preload one editable task natural-language prompt containing:
 
 1. Goal or problem to solve.
 2. Available time.
 3. Preferred format.
 4. Product context, when relevant.
 
-For Build and deploy an AI agent, preload the established happy-path example: “I want to build and deploy an AI agent. I have 30–60 minutes, prefer a balanced mix, and want to learn more about Microsoft Foundry.” Let the learner edit the sentence or select **Get started now** to match it directly to a playlist.
+Preload the established happy-path example: “I want to build and deploy an AI agent. I have 30–60 minutes, prefer a balanced mix, and want to learn more about Microsoft Foundry.” Let the learner edit the sentence or confirm **Get started now** to capture the included task and match it directly to a playlist.
 
-**Rationale:** Task-based learners arrive with an outcome in mind, so the platform captures that outcome before offering a shortcut. A complete example then demonstrates the remaining input while avoiding separate time, format, and product transitions.
+**Rationale:** The complete sentence demonstrates the expected input. The learner explicitly confirms or edits the included task before results are generated, without requiring separate task, time, format, and product transitions.
 
 **Decision:** Return three starting points centered on Advanced (L400):
 
@@ -84,7 +84,7 @@ For Build and deploy an AI agent, preload the established happy-path example: �
 
 ## One-step starter results
 
-**Decision:** Offer **Get started now** only after the learner selects a foundational topic or task goal and the corresponding preloaded prompt appears. Never offer the shortcut immediately after the initial path selection.
+**Decision:** Offer **Get started now** with the full preloaded prompt immediately after the path selection. Treat the action as explicit confirmation of the topic or task contained in that sentence.
 
 **Rationale:** Learners can see a useful result immediately, then edit the prompt or use result personalization when they need more control.
 
@@ -96,7 +96,7 @@ For Build and deploy an AI agent, preload the established happy-path example: �
 
 ## Refinement progress
 
-**Decision:** Show **Question 1 of 4** while capturing the topic or task and **Question 2 of 4** with the preloaded natural-language shortcut. Preserve progress context for learners who continue into **Personalize these results**.
+**Decision:** Show **Question 1 of 4** with the preloaded natural-language prompt. Preserve progress context for learners who continue into **Personalize these results**.
 
 **Rationale:** The indicator sets expectations, shows that the interaction is short, and helps learners decide whether to continue or request results early.
 

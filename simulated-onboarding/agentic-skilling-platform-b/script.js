@@ -775,22 +775,23 @@ function submitFoundationPrompt(text) {
 }
 
 function createFoundationPromptExample(topic) {
+  const selectedTopic = topic || "Generative AI";
   const topicPhrase =
     {
       "Effective Copilot prompts": "effective Copilot prompts",
       "AI agents": "AI agents",
       "Generative AI": "generative AI",
-    }[topic] || topic.toLowerCase();
+    }[selectedTopic] || selectedTopic.toLowerCase();
 
   return `I want to understand the key concepts of ${topicPhrase}. I have 15–30 minutes and prefer a balanced mix.`;
 }
 
 function showFoundationPrompt() {
   step = "foundationPrompt";
-  updateProgress(refinementSteps.foundationGoal);
+  updateProgress(refinementSteps.foundationTopic);
   appendAssistantMessage(`
-    <p><strong>Want to shape this playlist further?</strong></p>
-    <p>This example adds what you want to accomplish, how much time you have, and how you like to learn. Edit it or get started now.</p>
+    <p><strong>What do you want to learn?</strong></p>
+    <p>Tell us what you want to learn, what you want to accomplish, how much time you have, and how you like to learn.</p>
   `);
   setSuggestions([]);
   showNowButton.textContent = "Get started now";
@@ -856,21 +857,22 @@ function submitTaskPrompt(text) {
 }
 
 function createTaskPromptExample(goal) {
+  const selectedGoal = goal || "Build and deploy an AI agent";
   const product =
-    goal === "Automate a repeatable business process"
+    selectedGoal === "Automate a repeatable business process"
       ? "Microsoft Copilot Studio"
       : "Microsoft Foundry";
-  const goalPhrase = `${goal.charAt(0).toLowerCase()}${goal.slice(1)}`;
+  const goalPhrase = `${selectedGoal.charAt(0).toLowerCase()}${selectedGoal.slice(1)}`;
 
   return `I want to ${goalPhrase}. I have 30–60 minutes, prefer a balanced mix, and want to learn more about ${product}.`;
 }
 
 function showTaskPrompt() {
   step = "taskPrompt";
-  updateProgress(refinementSteps.taskTime);
+  updateProgress(refinementSteps.taskGoal);
   appendAssistantMessage(`
-    <p><strong>Want to shape this playlist further?</strong></p>
-    <p>This example adds how much time you have, how you like to learn, and a product you want to know more about. Edit it or get started now.</p>
+    <p><strong>What do you want to do?</strong></p>
+    <p>Tell us what you want to do, how much time you have, how you like to learn, and any products you want to know more about.</p>
   `);
   setSuggestions([]);
   showNowButton.textContent = "Get started now";
@@ -968,12 +970,12 @@ function choosePath(path) {
   appendUserMessage(labels[path]);
 
   if (path === "foundation") {
-    window.setTimeout(() => showStep("foundationTopic"), 250);
+    window.setTimeout(showFoundationPrompt, 250);
     return;
   }
 
   if (path === "task") {
-    window.setTimeout(() => showStep("taskGoal"), 250);
+    window.setTimeout(showTaskPrompt, 250);
     return;
   }
 
@@ -1813,7 +1815,7 @@ function advance(value) {
           : ""
       }
     `);
-    window.setTimeout(() => showStep("taskGoal"), 250);
+    window.setTimeout(showTaskPrompt, 250);
     return;
   }
 
